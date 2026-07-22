@@ -70,5 +70,13 @@ public class Department {
     )
     @Builder.Default
     private List<Subject> subjects = new ArrayList<>();
-
+    
+    @OneToMany(
+            mappedBy = "department",
+            cascade = CascadeType.ALL
+    )
+    @Builder.Default
+    private List<Semester> semesters = new ArrayList<>();
+    
+    
 }

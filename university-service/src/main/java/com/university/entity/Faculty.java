@@ -82,4 +82,12 @@ public class Faculty {
     @Builder.Default
     private List<Subject> subjects = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "faculty",
+            cascade = CascadeType.ALL
+    )
+    @Builder.Default
+    private List<Attendance> attendances = new ArrayList<>();
+    
+    
 }

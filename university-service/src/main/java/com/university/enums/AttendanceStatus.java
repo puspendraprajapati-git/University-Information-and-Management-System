@@ -3,6 +3,6 @@ package com.university.enums;
 public enum AttendanceStatus {
 
     PRESENT,
-    ABSENT
-
+    ABSENT,
+    LEAVE
 }

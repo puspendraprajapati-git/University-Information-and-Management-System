@@ -8,6 +8,6 @@ public enum Grade {
     B_PLUS,
     B,
     C,
-    FAIL
+    F
 
 }

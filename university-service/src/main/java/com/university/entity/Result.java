@@ -1,21 +1,20 @@
 package com.university.entity;
 
-import com.university.enums.AttendanceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "attendance")
+@Table(name = "results")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Attendance {
+public class Result {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long attendanceId;
+    private Long resultId;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
@@ -26,17 +25,13 @@ public class Attendance {
     private Subject subject;
 
     @ManyToOne
-    @JoinColumn(name = "faculty_id", nullable = false)
-    private Faculty faculty;
-
-    @ManyToOne
     @JoinColumn(name = "semester_id", nullable = false)
     private Semester semester;
 
-    @Column(nullable = false)
-    private LocalDate attendanceDate;
+    private Integer theoryMarks;
+    private Integer practicalMarks;
+    private Integer totalMarks;
+    private String grade;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AttendanceStatus status;
+    private LocalDate resultDate;
 }

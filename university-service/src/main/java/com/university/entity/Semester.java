@@ -1,79 +1,35 @@
 package com.university.entity;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.university.enums.SemesterType;
-
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "semesters")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Semester {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-
+    private Long semesterId;
 
     @Column(nullable = false)
-    private Integer semesterNumber;
+    private String semesterName;
 
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Integer year;
 
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
+    private List<Subject> subjects;
 
-    @Column(nullable = false)
-    private String academicYear;
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
+    private List<Attendance> attendanceList;
 
-
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SemesterType semesterType;
-
-
-
-    /*
-       Semester belongs to Department
-
-       Example:
-
-       CSE Department
-           |
-           |
-       Semester 5
-    */
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "department_id",
-            nullable = false
-    )
-    private Department department;
-
-
-
-    /*
-       One Semester contains many Subjects
-
-       Mapping will be completed
-       after Subject entity creation
-    */
-
-    @OneToMany(
-            mappedBy = "semester",
-            cascade = CascadeType.ALL
-    )
-    @Builder.Default
-    private List<Subject> subjects = new ArrayList<>();
-
-
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
+    private List<Result> results;
 }

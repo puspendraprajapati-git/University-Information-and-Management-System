@@ -1,6 +1,6 @@
 package com.university.enums;
 
-public enum UserRole {
+public enum Role {
 
     ADMIN,
     FACULTY,

@@ -1,8 +1,5 @@
 package com.university.enums;
 
 public enum AttendanceStatus {
-
-    PRESENT,
-    ABSENT,
-    LEAVE
+    PRESENT, ABSENT
 }

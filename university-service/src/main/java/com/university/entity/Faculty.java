@@ -1,93 +1,37 @@
 package com.university.entity;
 
-
-import java.util.List;
-
-import com.university.enums.FacultyType;
-
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 @Entity
-@Table(name = "faculties")
-@Getter
-@Setter
+@Table(name = "faculty")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Faculty {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long facultyId; // same as user_id (PK, FK)
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "faculty_id")
+    private Users user;
 
-    /*
-       Faculty is linked with User table
+    @Column(nullable = false)
+    private String fullName;
 
-       One User can have one Faculty profile
-    */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "user_id",
-            nullable = false,
-            unique = true
-    )
-    private User user;
-
-
-
-    /*
-       Faculty belongs to Department
-
-       Example:
-       Computer Science Department
-       Electronics Department
-    */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "department_id",
-            nullable = false
-    )
+    @ManyToOne
+    @JoinColumn(name = "dept_id", nullable = false)
     private Department department;
 
-
-
-    @Column(nullable = false)
-    private String employeeCode;
-
-
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private FacultyType facultyType;
-
-
-
-    @Column(nullable = false)
     private String qualification;
 
+    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL)
+    private List<Attendance> attendanceMarked;
 
-
-    private Integer experience;
-
-
-
-    private String specialization;
-    @OneToMany(
-            mappedBy = "faculty",
-            cascade = CascadeType.ALL
-    )
-    @Builder.Default
-    private List<Subject> subjects = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "faculty",
-            cascade = CascadeType.ALL
-    )
-    @Builder.Default
-    private List<Attendance> attendances = new ArrayList<>();
-    
-    
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
+    private List<Event> eventsOrganized;
 }

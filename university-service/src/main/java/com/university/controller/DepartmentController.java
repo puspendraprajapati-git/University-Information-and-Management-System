@@ -2,6 +2,8 @@ package com.university.controller;
 
 import com.university.dto.DepartmentDTO;
 import com.university.service.DepartmentService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/departments")
 @RequiredArgsConstructor
+@Tag(name = "Department Management", description = "CRUD operations for university departments")
 public class DepartmentController {
 
     private final DepartmentService departmentService;

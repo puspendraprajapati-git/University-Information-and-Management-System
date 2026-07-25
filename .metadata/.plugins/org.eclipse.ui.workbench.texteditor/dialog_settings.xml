@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="java.lang.Class">
+		<item key="replaceBarOpen" value="false"/>
+		<list key="findhistory">
+			<item value="spring-boot-starter-test"/>
+			<item value="modelmapper"/>
+			<item value="&lt;dependency&gt;&#x0A;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;&#x0A;    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;&#x0A;&lt;/dependency&gt;"/>
+			<item value="spring-boot-starter-security"/>
+		</list>
+	</section>
+</section>

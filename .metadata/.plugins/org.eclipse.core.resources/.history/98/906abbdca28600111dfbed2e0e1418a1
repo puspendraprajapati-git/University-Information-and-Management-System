@@ -1,0 +1,5 @@
+package com.university.security;
+
+public class JwtAuthFilter {
+
+}

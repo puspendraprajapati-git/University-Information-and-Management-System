@@ -1,6 +1,7 @@
 package com.university.controller;
 
 import com.university.dto.LoginRequestDTO;
+import com.university.dto.LoginResponseDTO;
 import com.university.dto.RegisterRequestDTO;
 import com.university.dto.UserResponseDTO;
 import com.university.service.UserService;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         return ResponseEntity.ok(userService.login(request));
     }
 

@@ -1,0 +1,5 @@
+package com.university.exception;
+
+public class DuplicateResourceException {
+
+}

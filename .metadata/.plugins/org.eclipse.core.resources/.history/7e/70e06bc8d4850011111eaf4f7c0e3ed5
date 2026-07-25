@@ -1,0 +1,8 @@
+package com.university.enums;
+
+
+public enum SemesterType {
+
+    ODD,
+    EVEN
+}

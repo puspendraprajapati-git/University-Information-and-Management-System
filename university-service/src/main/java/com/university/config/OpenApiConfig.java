@@ -22,3 +22,4 @@ public class OpenApiConfig {
                                 .email("dev@university.com")));
     }
 }
+

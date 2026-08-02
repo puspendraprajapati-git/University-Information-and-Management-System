@@ -12,12 +12,22 @@ import Register from "./pages/auth/Register";
 // Import protected route component
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
+// Import common dashboard layout
+import DashboardLayout from "./components/layout/DashboardLayout";
+
+// Import sidebar links for different user roles
+import {
+  adminLinks,
+  facultyLinks,
+  studentLinks,
+} from "./components/layout/Sidebar";
+
 function App() {
   return (
     // Provide authentication data to the entire application
     <AuthProvider>
 
-      {/* Enable routing throughout the application */}
+      {/* Enable routing */}
       <BrowserRouter>
 
         {/* Display toast notifications */}
@@ -33,43 +43,43 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Admin Dashboard - Accessible only by ADMIN */}
+          {/* Admin Dashboard */}
           <Route
             path="/admin/dashboard"
             element={
               <ProtectedRoute allowedRoles={["ADMIN"]}>
-                <div className="container mt-5">
-                  <h2>Admin Dashboard (placeholder)</h2>
-                </div>
+                <DashboardLayout links={adminLinks}>
+                  <h2>Admin Dashboard (coming in Phase 8)</h2>
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
 
-          {/* Faculty Dashboard - Accessible only by FACULTY */}
+          {/* Faculty Dashboard */}
           <Route
             path="/faculty/dashboard"
             element={
               <ProtectedRoute allowedRoles={["FACULTY"]}>
-                <div className="container mt-5">
-                  <h2>Faculty Dashboard (placeholder)</h2>
-                </div>
+                <DashboardLayout links={facultyLinks}>
+                  <h3>Welcome, Faculty</h3>
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
 
-          {/* Student Dashboard - Accessible only by STUDENT */}
+          {/* Student Dashboard */}
           <Route
             path="/student/dashboard"
             element={
               <ProtectedRoute allowedRoles={["STUDENT"]}>
-                <div className="container mt-5">
-                  <h2>Student Dashboard (placeholder)</h2>
-                </div>
+                <DashboardLayout links={studentLinks}>
+                  <h3>Welcome, Student</h3>
+                </DashboardLayout>
               </ProtectedRoute>
             }
           />
 
-          {/* Page shown when the user doesn't have permission */}
+          {/* Display when the user doesn't have permission */}
           <Route
             path="/unauthorized"
             element={

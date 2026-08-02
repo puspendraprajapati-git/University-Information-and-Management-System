@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -46,6 +47,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+        .cors(cors -> cors.configurationSource(request -> {
+            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+            corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:3000"));
+            corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            corsConfig.setAllowedHeaders(java.util.List.of("*"));
+            corsConfig.setAllowCredentials(true);
+            return corsConfig;
+        }))
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
@@ -53,32 +62,36 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                // Admin-only endpoints
-                .requestMatchers("/api/departments/**", "/api/semesters/**").hasRole("ADMIN")
+                // Admin-only endpoints for modifying departments and semesters
+                .requestMatchers(HttpMethod.POST, "/api/departments/**", "/api/semesters/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/departments/**", "/api/semesters/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/departments/**", "/api/semesters/**").hasRole("ADMIN")
                 .requestMatchers("/api/auth/users/**").hasRole("ADMIN")
 
                 // Faculty + Admin can manage subjects, attendance, results, events
-                .requestMatchers("/api/subjects/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("POST", "/api/attendance/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("PUT", "/api/attendance/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("DELETE", "/api/attendance/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("POST", "/api/results/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("PUT", "/api/results/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("DELETE", "/api/results/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("POST", "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("PUT", "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
-                .requestMatchers("DELETE", "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.POST, "/api/subjects/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.PUT, "/api/subjects/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.DELETE, "/api/subjects/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.POST, "/api/attendance/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.PUT, "/api/attendance/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.DELETE, "/api/attendance/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.POST, "/api/results/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.PUT, "/api/results/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.DELETE, "/api/results/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.POST, "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
 
                 // Admin manages students/faculty records
-                .requestMatchers("POST", "/api/students/**").hasRole("ADMIN")
-                .requestMatchers("PUT", "/api/students/**").hasRole("ADMIN")
-                .requestMatchers("DELETE", "/api/students/**").hasRole("ADMIN")
-                .requestMatchers("POST", "/api/faculty/**").hasRole("ADMIN")
-                .requestMatchers("PUT", "/api/faculty/**").hasRole("ADMIN")
-                .requestMatchers("DELETE", "/api/faculty/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/students/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/students/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/students/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/faculty/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/faculty/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/faculty/**").hasRole("ADMIN")
 
                 // Everyone authenticated can GET (view) — attendance, results, events, subjects, students, faculty
-                .requestMatchers("GET", "/api/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
 
                 // Anything else needs authentication
                 .anyRequest().authenticated()

@@ -16,16 +16,12 @@ import {
 
 const AdminFees = () => {
 
-  // Store all fee records
   const [fees, setFees] = useState([]);
 
-  // Show loading state while fetching fees
   const [loading, setLoading] = useState(true);
 
-  // Control create fee modal visibility
   const [showModal, setShowModal] = useState(false);
 
-  // Store fee form data
   const [formData, setFormData] = useState({
     studentId: "",
     semesterId: "",
@@ -34,21 +30,17 @@ const AdminFees = () => {
     dueDate: "",
   });
 
-
-  // Fetch fees when component loads
   useEffect(() => {
     fetchFees();
   }, []);
 
-
-  // Get all fee records from backend
+  // Fetch latest data from server
   const fetchFees = async () => {
     try {
       setLoading(true);
 
       const res = await feeService.getAllFees();
 
-      // Save fee data in state
       setFees(res.data);
 
     } catch (err) {
@@ -60,14 +52,12 @@ const AdminFees = () => {
     }
   };
 
-
-  // Create a new fee record
+  // Handle create action
   const handleCreate = async (e) => {
     e.preventDefault();
 
     try {
 
-      // Convert input values into correct data types
       const payload = {
         ...formData,
         studentId: parseInt(formData.studentId),
@@ -75,12 +65,10 @@ const AdminFees = () => {
         totalAmount: parseFloat(formData.totalAmount),
       };
 
-
       await feeService.createFee(payload);
 
       toast.success("Fee created successfully!");
 
-      // Close modal and refresh fee list
       setShowModal(false);
       fetchFees();
 
@@ -90,8 +78,7 @@ const AdminFees = () => {
     }
   };
 
-
-  // Return Bootstrap badge color based on fee status
+  // Fetch latest data from server
   const getStatusBadge = (status) => {
     switch (status) {
       case "PAID":
@@ -111,11 +98,10 @@ const AdminFees = () => {
     }
   };
 
-
   return (
     <Container fluid className="mt-4">
 
-      {/* Page header */}
+      {}
       <Row className="mb-4">
 
         <Col className="d-flex justify-content-between align-items-center">
@@ -135,8 +121,7 @@ const AdminFees = () => {
 
       </Row>
 
-
-      {/* Display loading spinner or fee table */}
+      {}
       {loading ? (
 
         <div className="text-center mt-5">
@@ -166,7 +151,6 @@ const AdminFees = () => {
               </tr>
 
             </thead>
-
 
             <tbody>
 
@@ -231,9 +215,7 @@ const AdminFees = () => {
 
       )}
 
-
-
-      {/* Create fee modal */}
+      {}
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
@@ -247,13 +229,11 @@ const AdminFees = () => {
 
         </Modal.Header>
 
-
         <Form onSubmit={handleCreate}>
 
           <Modal.Body>
 
-
-            {/* Student ID input */}
+            {}
             <Form.Group className="mb-3">
 
               <Form.Label>
@@ -274,9 +254,7 @@ const AdminFees = () => {
 
             </Form.Group>
 
-
-
-            {/* Semester ID input */}
+            {}
             <Form.Group className="mb-3">
 
               <Form.Label>
@@ -297,9 +275,7 @@ const AdminFees = () => {
 
             </Form.Group>
 
-
-
-            {/* Fee type selection */}
+            {}
             <Form.Group className="mb-3">
 
               <Form.Label>
@@ -340,9 +316,7 @@ const AdminFees = () => {
 
             </Form.Group>
 
-
-
-            {/* Amount input */}
+            {}
             <Form.Group className="mb-3">
 
               <Form.Label>
@@ -364,9 +338,7 @@ const AdminFees = () => {
 
             </Form.Group>
 
-
-
-            {/* Due date input */}
+            {}
             <Form.Group className="mb-3">
 
               <Form.Label>
@@ -387,9 +359,7 @@ const AdminFees = () => {
 
             </Form.Group>
 
-
           </Modal.Body>
-
 
           <Modal.Footer>
 
@@ -400,7 +370,6 @@ const AdminFees = () => {
               Cancel
             </Button>
 
-
             <Button
               variant="primary"
               type="submit"
@@ -409,7 +378,6 @@ const AdminFees = () => {
             </Button>
 
           </Modal.Footer>
-
 
         </Form>
 

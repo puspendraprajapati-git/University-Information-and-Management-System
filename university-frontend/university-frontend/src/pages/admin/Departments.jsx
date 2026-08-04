@@ -11,7 +11,6 @@ import {
   deleteDepartment,
 } from "../../services/departmentService";
 
-// Default form values used while creating a new department
 const emptyForm = {
   deptName: "",
   deptCode: "",
@@ -19,33 +18,25 @@ const emptyForm = {
 };
 
 const Departments = () => {
-  // Store department list received from backend
   const [departments, setDepartments] = useState([]);
 
-  // Show loading status while fetching data
   const [loading, setLoading] = useState(true);
 
-  // Controls create/update modal visibility
   const [showModal, setShowModal] = useState(false);
 
-  // Stores form input values
   const [formData, setFormData] = useState(emptyForm);
 
-  // Stores department id while editing
   const [editingId, setEditingId] = useState(null);
 
-  // Stores department id selected for deletion
   const [deleteId, setDeleteId] = useState(null);
 
-
-  // Fetch all departments from backend
+  // Fetch latest data from server
   const fetchDepartments = async () => {
     setLoading(true);
 
     try {
       const res = await getAllDepartments();
 
-      // Save department data in state
       setDepartments(res.data);
     } catch (err) {
       toast.error("Failed to load departments");
@@ -54,22 +45,18 @@ const Departments = () => {
     }
   };
 
-
-  // Load departments when component is mounted
   useEffect(() => {
     fetchDepartments();
   }, []);
 
-
-  // Open modal for creating a new department
+  // Open create modal dialog
   const openCreateModal = () => {
     setFormData(emptyForm);
     setEditingId(null);
     setShowModal(true);
   };
 
-
-  // Open modal with existing department data for editing
+  // Open edit modal dialog
   const openEditModal = (dept) => {
     setFormData({
       deptName: dept.deptName,
@@ -81,8 +68,7 @@ const Departments = () => {
     setShowModal(true);
   };
 
-
-  // Update form values when user types
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -90,12 +76,10 @@ const Departments = () => {
     });
   };
 
-
-  // Handle create and update operations
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Convert HOD id from string to number before sending
     const payload = {
       ...formData,
       hodId: formData.hodId ? Number(formData.hodId) : null,
@@ -103,16 +87,13 @@ const Departments = () => {
 
     try {
       if (editingId) {
-        // Update existing department
         await updateDepartment(editingId, payload);
         toast.success("Department updated");
       } else {
-        // Create new department
         await createDepartment(payload);
         toast.success("Department created");
       }
 
-      // Close modal and refresh table data
       setShowModal(false);
       fetchDepartments();
 
@@ -124,14 +105,12 @@ const Departments = () => {
     }
   };
 
-
-  // Store department id before showing delete confirmation
+  // Execute confirm delete function
   const confirmDelete = (id) => {
     setDeleteId(id);
   };
 
-
-  // Delete selected department
+  // Handle delete action 
   const handleDelete = async () => {
     try {
       await deleteDepartment(deleteId);
@@ -140,7 +119,6 @@ const Departments = () => {
 
       setDeleteId(null);
 
-      // Refresh department list after deletion
       fetchDepartments();
 
     } catch (err) {
@@ -149,11 +127,10 @@ const Departments = () => {
     }
   };
 
-
   return (
     <DashboardLayout>
 
-      {/* Page header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>Departments</h3>
 
@@ -165,8 +142,7 @@ const Departments = () => {
         </button>
       </div>
 
-
-      {/* Display loading message or department table */}
+      {}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -181,7 +157,6 @@ const Departments = () => {
               <th>Actions</th>
             </tr>
           </thead>
-
 
           <tbody>
             {departments.map((dept) => (
@@ -211,8 +186,7 @@ const Departments = () => {
               </tr>
             ))}
 
-
-            {/* Show message when no departments exist */}
+            {}
             {departments.length === 0 && (
               <tr>
                 <td colSpan="5" className="text-center">
@@ -226,8 +200,7 @@ const Departments = () => {
         </table>
       )}
 
-
-      {/* Create and update department modal */}
+      {}
       {showModal && (
         <div
           className="modal show d-block"
@@ -254,7 +227,6 @@ const Departments = () => {
 
                 </div>
 
-
                 <div className="modal-body">
 
                   <div className="mb-3">
@@ -272,7 +244,6 @@ const Departments = () => {
                     />
                   </div>
 
-
                   <div className="mb-3">
                     <label className="form-label">
                       Department Code
@@ -287,7 +258,6 @@ const Departments = () => {
                       required
                     />
                   </div>
-
 
                   <div className="mb-3">
                     <label className="form-label">
@@ -305,7 +275,6 @@ const Departments = () => {
 
                 </div>
 
-
                 <div className="modal-footer">
 
                   <button
@@ -315,7 +284,6 @@ const Departments = () => {
                   >
                     Cancel
                   </button>
-
 
                   <button
                     type="submit"
@@ -335,8 +303,7 @@ const Departments = () => {
         </div>
       )}
 
-
-      {/* Delete confirmation modal */}
+      {}
       <ConfirmModal
         show={!!deleteId}
         title="Delete Department"

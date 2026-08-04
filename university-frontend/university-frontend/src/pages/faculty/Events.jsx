@@ -6,8 +6,6 @@ import { facultyLinks } from '../../components/layout/Sidebar';
 import { getAllEvents, createEvent, updateEvent, deleteEvent } from '../../services/eventService';
 import ConfirmModal from '../../components/common/ConfirmModal';
 
-// this same form doubles up for three different "types" of posts -
-// events, news and syllabus uploads - so the fields cover all three
 const emptyForm = {
   title: '',
   description: '',
@@ -24,17 +22,15 @@ const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // create/edit modal state
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null); // null -> creating, otherwise editing this id
 
-  // holds the id of the row pending deletion, used to drive the confirm modal
   const [deleteId, setDeleteId] = useState(null);
 
-  // client-side filter for the type tabs (ALL / EVENT / NEWS / SYLLABUS)
   const [filterType, setFilterType] = useState('ALL');
 
+  // Fetch latest data from server
   const fetchEvents = async () => {
     setLoading(true);
     try {
@@ -51,16 +47,15 @@ const Events = () => {
     fetchEvents();
   }, []); // just load everything once, filtering happens on the client
 
+  // Open create modal dialog
   const openCreateModal = () => {
-    // organizer defaults to whoever is logged in
     setFormData({ ...emptyForm, organizerId: user.userId });
     setEditingId(null);
     setShowModal(true);
   };
 
+  // Open edit modal dialog
   const openEditModal = (ev) => {
-    // fall back to empty strings for anything optional so the
-    // controlled inputs don't flip from undefined -> value later
     setFormData({
       title: ev.title,
       description: ev.description || '',
@@ -74,14 +69,15 @@ const Events = () => {
     setShowModal(true);
   };
 
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // organizerId comes back as a string from the hidden field, cast it before sending
     const payload = { ...formData, organizerId: Number(formData.organizerId) };
 
     try {
@@ -99,7 +95,7 @@ const Events = () => {
     }
   };
 
-  // actual delete only runs once the user confirms in ConfirmModal
+  // Handle delete action 
   const handleDelete = async () => {
     try {
       await deleteEvent(deleteId);
@@ -112,11 +108,9 @@ const Events = () => {
     }
   };
 
-  // simple client-side filter - fine here since the list isn't huge,
-  // no need to hit the backend again just to switch tabs
   const filteredEvents = filterType === 'ALL' ? events : events.filter((e) => e.type === filterType);
 
-  // small helper to keep the badge colors out of the JSX below
+  // Execute type badge function
   const typeBadge = (type) => {
     const colors = { EVENT: 'bg-primary', NEWS: 'bg-warning text-dark', SYLLABUS: 'bg-success' };
     return <span className={`badge ${colors[type] || 'bg-secondary'}`}>{type}</span>;
@@ -131,7 +125,7 @@ const Events = () => {
         </button>
       </div>
 
-      {/* type filter tabs */}
+      {}
       <div className="btn-group mb-3">
         {['ALL', 'EVENT', 'NEWS', 'SYLLABUS'].map((t) => (
           <button
@@ -190,7 +184,7 @@ const Events = () => {
         </table>
       )}
 
-      {/* create/edit modal - same form is reused for all 3 post types */}
+      {}
       {showModal && (
         <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog">
@@ -236,7 +230,7 @@ const Events = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Date</label>
-                    {/* not required - a syllabus upload doesn't really need a date */}
+                    {}
                     <input
                       type="date"
                       className="form-control"
@@ -283,7 +277,7 @@ const Events = () => {
         </div>
       )}
 
-      {/* reusable confirm dialog, only rendered "open" when deleteId is set */}
+      {}
       <ConfirmModal
         show={!!deleteId}
         title="Delete"

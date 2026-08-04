@@ -21,6 +21,7 @@ const Results = () => {
   const [editingId, setEditingId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
+  // Fetch latest data from server
   const fetchAll = async () => {
     setLoading(true);
     try {
@@ -40,12 +41,14 @@ const Results = () => {
 
   useEffect(() => { fetchAll(); }, []);
 
+  // Open create modal dialog
   const openCreateModal = () => {
     setFormData(emptyForm);
     setEditingId(null);
     setShowModal(true);
   };
 
+  // Open edit modal dialog
   const openEditModal = (r) => {
     setFormData({
       studentId: r.studentId,
@@ -58,8 +61,10 @@ const Results = () => {
     setShowModal(true);
   };
 
+  // Handle input changes
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -84,6 +89,7 @@ const Results = () => {
     }
   };
 
+  // Handle delete action 
   const handleDelete = async () => {
     try {
       await deleteResult(deleteId);

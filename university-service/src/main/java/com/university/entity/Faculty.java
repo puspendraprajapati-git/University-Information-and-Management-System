@@ -10,14 +10,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Faculty {
-
-    @Id
-    private Long facultyId; // same as user_id (PK, FK)
+public class Faculty extends BaseEntity {
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "faculty_id")
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @Column(nullable = false)

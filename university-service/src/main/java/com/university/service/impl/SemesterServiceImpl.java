@@ -6,7 +6,6 @@ import com.university.exception.ResourceNotFoundException;
 import com.university.repository.SemesterRepository;
 import com.university.service.SemesterService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,32 +16,47 @@ import java.util.stream.Collectors;
 public class SemesterServiceImpl implements SemesterService {
 
     private final SemesterRepository semesterRepository;
-    private final ModelMapper modelMapper;
 
+    /*
+     * Method to create a semester
+     */
     @Override
     public SemesterDTO createSemester(SemesterDTO dto) {
-        Semester semester = modelMapper.map(dto, Semester.class);
-        semester.setSemesterId(null); // ensure insert, not update
+        Semester semester = Semester.builder()
+                .semesterName(dto.getSemesterName())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .year(dto.getYear())
+                .build();
 
         Semester saved = semesterRepository.save(semester);
-        return modelMapper.map(saved, SemesterDTO.class);
+        return mapToResponse(saved);
     }
 
+    /*
+     * Method to get semester by ID
+     */
     @Override
     public SemesterDTO getSemesterById(Long id) {
         Semester semester = semesterRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Semester not found with id: " + id));
-        return modelMapper.map(semester, SemesterDTO.class);
+        return mapToResponse(semester);
     }
 
+    /*
+     * Method to get all semesters
+     */
     @Override
     public List<SemesterDTO> getAllSemesters() {
         return semesterRepository.findAll()
                 .stream()
-                .map(sem -> modelMapper.map(sem, SemesterDTO.class))
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to update an existing semester
+     */
     @Override
     public SemesterDTO updateSemester(Long id, SemesterDTO dto) {
         Semester existing = semesterRepository.findById(id)
@@ -54,14 +68,27 @@ public class SemesterServiceImpl implements SemesterService {
         existing.setYear(dto.getYear());
 
         Semester updated = semesterRepository.save(existing);
-        return modelMapper.map(updated, SemesterDTO.class);
+        return mapToResponse(updated);
     }
 
+    /*
+     * Method to delete a semester
+     */
     @Override
     public void deleteSemester(Long id) {
         if (!semesterRepository.existsById(id)) {
             throw new ResourceNotFoundException("Semester not found with id: " + id);
         }
         semesterRepository.deleteById(id);
+    }
+    
+    private SemesterDTO mapToResponse(Semester semester) {
+        return new SemesterDTO(
+                semester.getId(),
+                semester.getSemesterName(),
+                semester.getStartDate(),
+                semester.getEndDate(),
+                semester.getYear()
+        );
     }
 }

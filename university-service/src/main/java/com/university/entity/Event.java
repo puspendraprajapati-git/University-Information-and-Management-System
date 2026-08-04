@@ -11,11 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Event {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventId;
+public class Event extends BaseEntity {
 
     @Column(nullable = false)
     private String title;

@@ -11,14 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Student {
-
-    @Id
-    private Long studentId; // same as user_id (PK, FK) - shared primary key
+public class Student extends BaseEntity {
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @Column(nullable = false, unique = true)

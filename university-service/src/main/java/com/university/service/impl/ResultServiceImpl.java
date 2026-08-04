@@ -31,6 +31,9 @@ public class ResultServiceImpl implements ResultService {
     private final SubjectRepository subjectRepository;
     private final SemesterRepository semesterRepository;
 
+    /*
+     * Method to upload a new result
+     */
     @Override
     @Transactional
     public ResultRespDTO uploadResult(ResultReqDTO dto) {
@@ -61,6 +64,9 @@ public class ResultServiceImpl implements ResultService {
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to update an existing result
+     */
     @Override
     @Transactional
     public ResultRespDTO updateResult(Long id, ResultReqDTO dto) {
@@ -92,6 +98,9 @@ public class ResultServiceImpl implements ResultService {
         return mapToResponse(updated);
     }
 
+    /*
+     * Method to get a result by ID
+     */
     @Override
     public ResultRespDTO getResultById(Long id) {
         Result result = resultRepository.findById(id)
@@ -99,6 +108,9 @@ public class ResultServiceImpl implements ResultService {
         return mapToResponse(result);
     }
 
+    /*
+     * Method to get all results
+     */
     @Override
     public List<ResultRespDTO> getAllResults() {
         return resultRepository.findAll()
@@ -107,17 +119,23 @@ public class ResultServiceImpl implements ResultService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get results by student ID
+     */
     @Override
     public List<ResultRespDTO> getResultsByStudent(Long studentId) {
-        return resultRepository.findByStudent_StudentId(studentId)
+        return resultRepository.findByStudent_Id(studentId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get semester result for a student
+     */
     @Override
     public SemesterResultRespDTO getSemesterResult(Long studentId, Long semesterId) {
-        List<Result> results = resultRepository.findByStudent_StudentIdAndSemester_SemesterId(studentId, semesterId);
+        List<Result> results = resultRepository.findByStudent_IdAndSemester_Id(studentId, semesterId);
 
         if (results.isEmpty()) {
             throw new ResourceNotFoundException("No results found for this student in the given semester");
@@ -136,15 +154,18 @@ public class ResultServiceImpl implements ResultService {
         Semester semester = results.get(0).getSemester();
 
         return new SemesterResultRespDTO(
-                student.getStudentId(),
+                student.getId(),
                 student.getFullName(),
-                semester.getSemesterId(),
+                semester.getId(),
                 semester.getSemesterName(),
                 subjectResults,
                 Math.round(gpa * 100.0) / 100.0 // round to 2 decimal places
         );
     }
 
+    /*
+     * Method to delete a result
+     */
     @Override
     public void deleteResult(Long id) {
         if (!resultRepository.existsById(id)) {
@@ -153,14 +174,17 @@ public class ResultServiceImpl implements ResultService {
         resultRepository.deleteById(id);
     }
 
+    /*
+     * Helper method to map entity to DTO
+     */
     private ResultRespDTO mapToResponse(Result result) {
         return new ResultRespDTO(
-                result.getResultId(),
-                result.getStudent().getStudentId(),
+                result.getId(),
+                result.getStudent().getId(),
                 result.getStudent().getFullName(),
-                result.getSubject().getSubjectId(),
+                result.getSubject().getId(),
                 result.getSubject().getSubjectName(),
-                result.getSemester().getSemesterId(),
+                result.getSemester().getId(),
                 result.getSemester().getSemesterName(),
                 result.getTheoryMarks(),
                 result.getPracticalMarks(),

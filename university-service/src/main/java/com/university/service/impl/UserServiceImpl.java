@@ -18,6 +18,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.university.enums.Role;
+import com.university.entity.Student;
+import com.university.entity.Faculty;
+import com.university.entity.Department;
+import com.university.repository.StudentRepository;
+import com.university.repository.FacultyRepository;
+import com.university.repository.DepartmentRepository;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -25,7 +33,13 @@ public class UserServiceImpl implements UserService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final StudentRepository studentRepository;
+    private final FacultyRepository facultyRepository;
+    private final DepartmentRepository departmentRepository;
 
+    /*
+     * Method to register a new user
+     */
     @Override
     public UserResponseDTO register(RegisterRequestDTO request) {
         if (usersRepository.findByUsername(request.getUsername()) != null) {
@@ -44,9 +58,39 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         Users saved = usersRepository.save(user);
+
+        // Auto-create corresponding profile based on role
+        if (saved.getRole() == Role.STUDENT) {
+            Department defaultDept = departmentRepository.findAll().stream().findFirst().orElse(null);
+            if (defaultDept != null) {
+                Student student = Student.builder()
+                        .user(saved)
+                        .fullName(saved.getUsername())
+                        .enrollmentNo("STU" + System.currentTimeMillis())
+                        .department(defaultDept)
+                        .currentSemester(1)
+                        .build();
+                studentRepository.save(student);
+            }
+        } else if (saved.getRole() == Role.FACULTY) {
+            Department defaultDept = departmentRepository.findAll().stream().findFirst().orElse(null);
+            if (defaultDept != null) {
+                Faculty faculty = Faculty.builder()
+                        .user(saved)
+                        .fullName(saved.getUsername())
+                        .department(defaultDept)
+                        .qualification("TBD")
+                        .build();
+                facultyRepository.save(faculty);
+            }
+        }
+
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to authenticate a user and generate JWT token
+     */
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
         Users user = usersRepository.findByUsername(request.getUsername());
@@ -57,11 +101,14 @@ public class UserServiceImpl implements UserService {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getUserId());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getId());
 
-        return new LoginResponseDTO(token, user.getUserId(), user.getUsername(), user.getRole());
+        return new LoginResponseDTO(token, user.getId(), user.getUsername(), user.getRole());
     }
 
+    /*
+     * Method to get user by ID
+     */
     @Override
     public UserResponseDTO getUserById(Long id) {
         Users user = usersRepository.findById(id)
@@ -69,6 +116,9 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(user);
     }
 
+    /*
+     * Method to get all users
+     */
     @Override
     public List<UserResponseDTO> getAllUsers() {
         return usersRepository.findAll()
@@ -77,6 +127,9 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to delete a user
+     */
     @Override
     public void deleteUser(Long id) {
         if (!usersRepository.existsById(id)) {
@@ -85,13 +138,15 @@ public class UserServiceImpl implements UserService {
         usersRepository.deleteById(id);
     }
 
+    /*
+     * Helper method to map entity to response
+     */
     private UserResponseDTO mapToResponse(Users user) {
         return new UserResponseDTO(
-                user.getUserId(),
+                user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                user.getProfileImage()
-        );
+                user.getProfileImage());
     }
 }

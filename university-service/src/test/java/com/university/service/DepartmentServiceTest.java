@@ -29,23 +29,18 @@ class DepartmentServiceTest {
 
     private DepartmentServiceImpl departmentService;
 
-    private ModelMapper modelMapper;
-
     private Department department;
     private DepartmentDTO departmentDTO;
 
     @BeforeEach
     void setUp() {
 
-        modelMapper = new ModelMapper();
-
         departmentService = new DepartmentServiceImpl(
-                departmentRepository,
-                modelMapper
+                departmentRepository
         );
 
         department = new Department();
-        department.setDeptId(1L);
+        department.setId(1L);
         department.setDeptName("Computer Engineering");
         department.setDeptCode("CE");
 

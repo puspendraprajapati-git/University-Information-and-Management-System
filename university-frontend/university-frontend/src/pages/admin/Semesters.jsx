@@ -11,8 +11,6 @@ import {
   deleteSemester,
 } from "../../services/semesterService";
 
-
-// Default values for semester form
 const emptyForm = {
   semesterName: "",
   startDate: "",
@@ -20,30 +18,21 @@ const emptyForm = {
   year: "",
 };
 
-
 const Semesters = () => {
 
-  // Store semester list
   const [semesters, setSemesters] = useState([]);
 
-  // Show loading state while fetching data
   const [loading, setLoading] = useState(true);
 
-  // Control modal visibility
   const [showModal, setShowModal] = useState(false);
 
-  // Store form values
   const [formData, setFormData] = useState(emptyForm);
 
-  // Store semester id during edit operation
   const [editingId, setEditingId] = useState(null);
 
-  // Store semester id selected for delete
   const [deleteId, setDeleteId] = useState(null);
 
-
-
-  // Fetch all semesters from backend
+  // Fetch latest data from server
   const fetchSemesters = async () => {
 
     setLoading(true);
@@ -52,7 +41,6 @@ const Semesters = () => {
 
       const res = await getAllSemesters();
 
-      // Save semester data
       setSemesters(res.data);
 
     } catch (err) {
@@ -66,19 +54,13 @@ const Semesters = () => {
     }
   };
 
-
-
-  // Load semesters when component starts
   useEffect(() => {
 
     fetchSemesters();
 
   }, []);
 
-
-
-
-  // Open modal for creating new semester
+  // Open create modal dialog
   const openCreateModal = () => {
 
     setFormData(emptyForm);
@@ -87,9 +69,7 @@ const Semesters = () => {
 
   };
 
-
-
-  // Open modal with existing semester details
+  // Open edit modal dialog
   const openEditModal = (sem) => {
 
     setFormData({
@@ -104,9 +84,7 @@ const Semesters = () => {
 
   };
 
-
-
-  // Update form values when user types
+  // Handle input changes
   const handleChange = (e) => {
 
     setFormData({
@@ -116,44 +94,34 @@ const Semesters = () => {
 
   };
 
-
-
-  // Handle create and update semester
+  // Handle form submission
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
-
-    // Convert year value into number before sending
     const payload = {
       ...formData,
       year: Number(formData.year),
     };
 
-
     try {
 
       if (editingId) {
 
-        // Update existing semester
         await updateSemester(editingId, payload);
 
         toast.success("Semester updated");
 
       } else {
 
-        // Create new semester
         await createSemester(payload);
 
         toast.success("Semester created");
 
       }
 
-
-      // Close modal and refresh list
       setShowModal(false);
       fetchSemesters();
-
 
     } catch (err) {
 
@@ -165,9 +133,7 @@ const Semesters = () => {
 
   };
 
-
-
-  // Delete semester after confirmation
+  // Handle delete action 
   const handleDelete = async () => {
 
     try {
@@ -180,7 +146,6 @@ const Semesters = () => {
 
       fetchSemesters();
 
-
     } catch (err) {
 
       toast.error("Failed to delete semester");
@@ -191,20 +156,16 @@ const Semesters = () => {
 
   };
 
-
-
   return (
 
     <DashboardLayout>
 
-
-      {/* Page heading and add button */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-3">
 
         <h3>
           Semesters
         </h3>
-
 
         <button
           className="btn btn-primary"
@@ -215,9 +176,7 @@ const Semesters = () => {
 
       </div>
 
-
-
-      {/* Semester table */}
+      {}
       {loading ? (
 
         <p>
@@ -241,9 +200,7 @@ const Semesters = () => {
 
           </thead>
 
-
           <tbody>
-
 
             {semesters.map((sem) => (
 
@@ -269,7 +226,6 @@ const Semesters = () => {
                   {sem.year}
                 </td>
 
-
                 <td>
 
                   <button
@@ -279,7 +235,6 @@ const Semesters = () => {
                     Edit
                   </button>
 
-
                   <button
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => setDeleteId(sem.semesterId)}
@@ -287,17 +242,13 @@ const Semesters = () => {
                     Delete
                   </button>
 
-
                 </td>
-
 
               </tr>
 
             ))}
 
-
-
-            {/* Show message when no semesters exist */}
+            {}
             {semesters.length === 0 && (
 
               <tr>
@@ -313,18 +264,13 @@ const Semesters = () => {
 
             )}
 
-
           </tbody>
-
 
         </table>
 
       )}
 
-
-
-
-      {/* Create and update semester modal */}
+      {}
       {showModal && (
 
         <div
@@ -332,17 +278,13 @@ const Semesters = () => {
           style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
 
-
           <div className="modal-dialog">
 
             <div className="modal-content">
 
-
               <form onSubmit={handleSubmit}>
 
-
                 <div className="modal-header">
-
 
                   <h5 className="modal-title">
 
@@ -351,7 +293,6 @@ const Semesters = () => {
                       : "Add Semester"}
 
                   </h5>
-
 
                   <button
 
@@ -363,21 +304,15 @@ const Semesters = () => {
 
                   ></button>
 
-
                 </div>
 
-
-
-
                 <div className="modal-body">
-
 
                   <div className="mb-3">
 
                     <label className="form-label">
                       Semester Name
                     </label>
-
 
                     <input
 
@@ -397,14 +332,11 @@ const Semesters = () => {
 
                   </div>
 
-
-
                   <div className="mb-3">
 
                     <label className="form-label">
                       Start Date
                     </label>
-
 
                     <input
 
@@ -424,15 +356,11 @@ const Semesters = () => {
 
                   </div>
 
-
-
-
                   <div className="mb-3">
 
                     <label className="form-label">
                       End Date
                     </label>
-
 
                     <input
 
@@ -452,15 +380,11 @@ const Semesters = () => {
 
                   </div>
 
-
-
-
                   <div className="mb-3">
 
                     <label className="form-label">
                       Year
                     </label>
-
 
                     <input
 
@@ -480,15 +404,9 @@ const Semesters = () => {
 
                   </div>
 
-
-
                 </div>
 
-
-
-
                 <div className="modal-footer">
-
 
                   <button
 
@@ -504,8 +422,6 @@ const Semesters = () => {
 
                   </button>
 
-
-
                   <button
 
                     type="submit"
@@ -518,26 +434,19 @@ const Semesters = () => {
 
                   </button>
 
-
                 </div>
 
-
               </form>
-
 
             </div>
 
           </div>
 
-
         </div>
 
       )}
 
-
-
-
-      {/* Delete confirmation modal */}
+      {}
       <ConfirmModal
 
         show={!!deleteId}
@@ -552,12 +461,10 @@ const Semesters = () => {
 
       />
 
-
     </DashboardLayout>
 
   );
 
 };
-
 
 export default Semesters;

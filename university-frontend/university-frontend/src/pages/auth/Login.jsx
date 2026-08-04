@@ -5,101 +5,43 @@ import { loginUser } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
-  // Store the username and password entered by the user
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-
-  // Used to disable the login button while the request is processing
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
-
-  // Get the login function from AuthContext
   const { login } = useAuth();
-
-  // Used to navigate to different pages after successful login
   const navigate = useNavigate();
 
-  // Update the input field whenever the user types
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
-    // Prevent page refresh
     e.preventDefault();
-
-    // Show loading state
     setLoading(true);
 
     try {
-      // Send login request to the backend
       const data = await loginUser(formData);
-
-      // Save user details and JWT token
-      login(
-        {
-          userId: data.userId,
-          username: data.username,
-          role: data.role,
-        },
-        data.token
-      );
-
-      // Show success message
+      login({ userId: data.userId, username: data.username, role: data.role }, data.token);
       toast.success(`Welcome back, ${data.username}!`);
-
-      // Redirect the user based on their role
-      if (data.role === "ADMIN") {
-        navigate("/admin/dashboard");
-      } else if (data.role === "FACULTY") {
-        navigate("/faculty/dashboard");
-      } else if (data.role === "STUDENT") {
-        navigate("/student/dashboard");
-      } else {
-        navigate("/");
-      }
+      
+      if (data.role === "ADMIN") navigate("/admin/dashboard");
+      else if (data.role === "FACULTY") navigate("/faculty/dashboard");
+      else if (data.role === "STUDENT") navigate("/student/dashboard");
+      else navigate("/");
     } catch (err) {
-      // Display the error message received from the backend
-      const message =
-        err.response?.data?.message ||
-        "Login failed. Please check your credentials.";
-
+      const message = err.response?.data?.message || "Login failed. Please check your credentials.";
       toast.error(message);
     } finally {
-      // Stop loading whether login succeeds or fails
       setLoading(false);
     }
   };
 
   return (
-    // Center the login card on the screen
-    <div
-      className="d-flex justify-content-center align-items-center bg-light"
-      style={{ minHeight: "100vh" }}
-    >
-      {/* Login Card */}
-      <div
-        className="card shadow-sm p-4"
-        style={{ width: "400px" }}
-      >
-        <h3 className="text-center mb-4">
-          University Portal Login
-        </h3>
-
-        {/* Login Form */}
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div className="card shadow-sm p-4 w-50">
+        <h3 className="text-center mb-4">University Portal Login</h3>
         <form onSubmit={handleSubmit}>
-
-          {/* Username Input */}
           <div className="mb-3">
-            <label className="form-label">
-              Username
-            </label>
-
+            <label className="form-label">Username</label>
             <input
               type="text"
               className="form-control"
@@ -109,13 +51,8 @@ const Login = () => {
               required
             />
           </div>
-
-          {/* Password Input */}
           <div className="mb-3">
-            <label className="form-label">
-              Password
-            </label>
-
+            <label className="form-label">Password</label>
             <input
               type="password"
               className="form-control"
@@ -125,23 +62,12 @@ const Login = () => {
               required
             />
           </div>
-
-          {/* Login Button */}
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            disabled={loading}
-          >
+          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-
-        {/* Registration Link */}
         <p className="text-center mt-3 mb-0">
-          Don't have an account?{" "}
-          <Link to="/register">
-            Register here
-          </Link>
+          Don't have an account? <Link to="/register">Register here</Link>
         </p>
       </div>
     </div>

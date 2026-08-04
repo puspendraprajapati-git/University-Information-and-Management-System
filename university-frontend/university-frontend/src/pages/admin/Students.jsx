@@ -15,8 +15,6 @@ import {
 import { getAllDepartments } from "../../services/departmentService";
 import { getAllUsers } from "../../services/userService";
 
-
-// Default student form values
 const emptyForm = {
   userId: "",
   enrollmentNo: "",
@@ -26,39 +24,27 @@ const emptyForm = {
   dateOfBirth: "",
 };
 
-
 const Students = () => {
 
-  // Store student records
   const [students, setStudents] = useState([]);
 
-  // Store departments for dropdown
   const [departments, setDepartments] = useState([]);
 
-  // Store users who can be assigned as students
   const [availableUsers, setAvailableUsers] = useState([]);
 
-  // Loading state while fetching data
   const [loading, setLoading] = useState(true);
 
-  // Control add/edit modal
   const [showModal, setShowModal] = useState(false);
 
-  // Store form data
   const [formData, setFormData] = useState(emptyForm);
 
-  // Store student id while editing
   const [editingId, setEditingId] = useState(null);
 
-  // Store student id for delete confirmation
   const [deleteId, setDeleteId] = useState(null);
 
-  // Store search input value
   const [searchTerm, setSearchTerm] = useState("");
 
-
-
-  // Fetch students, departments and users
+  // Fetch latest data from server
   const fetchAll = async () => {
 
     setLoading(true);
@@ -71,17 +57,13 @@ const Students = () => {
         getAllUsers(),
       ]);
 
-
       setStudents(stuRes.data);
 
       setDepartments(deptRes.data);
 
-
-      // Find users who have STUDENT role but no student profile
       const existingStudentIds = stuRes.data.map(
         (student) => student.studentId
       );
-
 
       setAvailableUsers(
         userRes.data.filter(
@@ -90,7 +72,6 @@ const Students = () => {
             !existingStudentIds.includes(user.userId)
         )
       );
-
 
     } catch (err) {
 
@@ -104,25 +85,17 @@ const Students = () => {
 
   };
 
-
-
-  // Load data when page opens
   useEffect(() => {
 
     fetchAll();
 
   }, []);
 
-
-
-
-  // Search students by name
+  // Handle search action
   const handleSearch = async (e) => {
 
     e.preventDefault();
 
-
-    // Reload all students when search is empty
     if (!searchTerm.trim()) {
 
       fetchAll();
@@ -131,13 +104,11 @@ const Students = () => {
 
     }
 
-
     try {
 
       const res = await searchStudents(searchTerm);
 
       setStudents(res.data);
-
 
     } catch (err) {
 
@@ -147,10 +118,7 @@ const Students = () => {
 
   };
 
-
-
-
-  // Open modal for adding student
+  // Open create modal dialog
   const openCreateModal = () => {
 
     setFormData(emptyForm);
@@ -161,10 +129,7 @@ const Students = () => {
 
   };
 
-
-
-
-  // Open modal with student details for editing
+  // Open edit modal dialog
   const openEditModal = (stu) => {
 
     setFormData({
@@ -183,17 +148,13 @@ const Students = () => {
 
     });
 
-
     setEditingId(stu.studentId);
 
     setShowModal(true);
 
   };
 
-
-
-
-  // Update form values
+  // Handle input changes
   const handleChange = (e) => {
 
     setFormData({
@@ -206,16 +167,11 @@ const Students = () => {
 
   };
 
-
-
-
-  // Create or update student
+  // Handle form submission
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
-
-    // Prepare data before sending to backend
     const payload = {
 
       userId: Number(formData.userId),
@@ -234,33 +190,25 @@ const Students = () => {
 
     };
 
-
-
     try {
-
 
       if (editingId) {
 
-        // Update existing student
         await updateStudent(editingId, payload);
 
         toast.success("Student updated");
 
-
       } else {
 
-        // Create new student
         await createStudent(payload);
 
         toast.success("Student created");
 
       }
 
-
       setShowModal(false);
 
       fetchAll();
-
 
     } catch (err) {
 
@@ -272,10 +220,7 @@ const Students = () => {
 
   };
 
-
-
-
-  // Delete selected student
+  // Handle delete action 
   const handleDelete = async () => {
 
     try {
@@ -288,7 +233,6 @@ const Students = () => {
 
       fetchAll();
 
-
     } catch (err) {
 
       toast.error("Failed to delete student");
@@ -299,21 +243,16 @@ const Students = () => {
 
   };
 
-
-
-
   return (
 
     <DashboardLayout>
 
-
-      {/* Page header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-3">
 
         <h3>
           Students
         </h3>
-
 
         <button
 
@@ -327,13 +266,9 @@ const Students = () => {
 
         </button>
 
-
       </div>
 
-
-
-
-      {/* Student search */}
+      {}
       <form
 
         className="d-flex mb-3"
@@ -356,7 +291,6 @@ const Students = () => {
 
         />
 
-
         <button
 
           type="submit"
@@ -369,24 +303,18 @@ const Students = () => {
 
         </button>
 
-
       </form>
 
-
-
-
-      {/* Student table */}
+      {}
       {loading ? (
 
         <p>
           Loading...
         </p>
 
-
       ) : (
 
         <table className="table table-striped table-bordered bg-white">
-
 
           <thead className="table-dark">
 
@@ -408,51 +336,39 @@ const Students = () => {
 
             </tr>
 
-
           </thead>
 
-
-
           <tbody>
-
 
             {students.map((stu) => (
 
               <tr key={stu.studentId}>
 
-
                 <td>
                   {stu.studentId}
                 </td>
-
 
                 <td>
                   {stu.enrollmentNo}
                 </td>
 
-
                 <td>
                   {stu.fullName}
                 </td>
-
 
                 <td>
                   {stu.deptName}
                 </td>
 
-
                 <td>
                   {stu.currentSemester}
                 </td>
-
 
                 <td>
                   {stu.dateOfBirth}
                 </td>
 
-
                 <td>
-
 
                   <button
 
@@ -466,8 +382,6 @@ const Students = () => {
 
                   </button>
 
-
-
                   <button
 
                     className="btn btn-sm btn-outline-danger"
@@ -480,16 +394,11 @@ const Students = () => {
 
                   </button>
 
-
                 </td>
-
 
               </tr>
 
-
             ))}
-
-
 
             {students.length === 0 && (
 
@@ -507,26 +416,17 @@ const Students = () => {
 
                 </td>
 
-
               </tr>
 
             )}
 
-
           </tbody>
-
 
         </table>
 
-
       )}
 
-
-
-
-
-
-      {/* Add and edit student modal */}
+      {}
       {showModal && (
 
         <div
@@ -537,18 +437,13 @@ const Students = () => {
 
         >
 
-
           <div className="modal-dialog">
-
 
             <div className="modal-content">
 
-
               <form onSubmit={handleSubmit}>
 
-
                 <div className="modal-header">
-
 
                   <h5 className="modal-title">
 
@@ -557,8 +452,6 @@ const Students = () => {
                       : "Add Student"}
 
                   </h5>
-
-
 
                   <button
 
@@ -570,27 +463,19 @@ const Students = () => {
 
                   ></button>
 
-
                 </div>
 
-
-
-
                 <div className="modal-body">
-
 
                   {!editingId && (
 
                     <div className="mb-3">
-
 
                       <label className="form-label">
 
                         User Account (must have role STUDENT)
 
                       </label>
-
-
 
                       <select
 
@@ -606,14 +491,11 @@ const Students = () => {
 
                       >
 
-
                         <option value="">
 
                           Select user
 
                         </option>
-
-
 
                         {availableUsers.map((u) => (
 
@@ -629,19 +511,13 @@ const Students = () => {
 
                           </option>
 
-
                         ))}
 
-
                       </select>
-
 
                     </div>
 
                   )}
-
-
-
 
                   <div className="mb-3">
 
@@ -650,7 +526,6 @@ const Students = () => {
                       Enrollment No
 
                     </label>
-
 
                     <input
 
@@ -670,10 +545,6 @@ const Students = () => {
 
                   </div>
 
-
-
-
-
                   <div className="mb-3">
 
                     <label className="form-label">
@@ -681,7 +552,6 @@ const Students = () => {
                       Full Name
 
                     </label>
-
 
                     <input
 
@@ -699,22 +569,15 @@ const Students = () => {
 
                     />
 
-
                   </div>
 
-
-
-
-
                   <div className="mb-3">
-
 
                     <label className="form-label">
 
                       Department
 
                     </label>
-
 
                     <select
 
@@ -736,7 +599,6 @@ const Students = () => {
 
                       </option>
 
-
                       {departments.map((d) => (
 
                         <option
@@ -751,18 +613,11 @@ const Students = () => {
 
                         </option>
 
-
                       ))}
-
 
                     </select>
 
-
                   </div>
-
-
-
-
 
                   <div className="mb-3">
 
@@ -771,7 +626,6 @@ const Students = () => {
                       Current Semester
 
                     </label>
-
 
                     <input
 
@@ -787,22 +641,15 @@ const Students = () => {
 
                     />
 
-
                   </div>
 
-
-
-
-
                   <div className="mb-3">
-
 
                     <label className="form-label">
 
                       Date of Birth
 
                     </label>
-
 
                     <input
 
@@ -818,18 +665,11 @@ const Students = () => {
 
                     />
 
-
                   </div>
-
-
 
                 </div>
 
-
-
-
                 <div className="modal-footer">
-
 
                   <button
 
@@ -845,8 +685,6 @@ const Students = () => {
 
                   </button>
 
-
-
                   <button
 
                     type="submit"
@@ -859,28 +697,19 @@ const Students = () => {
 
                   </button>
 
-
                 </div>
-
 
               </form>
 
-
             </div>
 
-
           </div>
-
 
         </div>
 
       )}
 
-
-
-
-
-      {/* Delete confirmation */}
+      {}
       <ConfirmModal
 
         show={!!deleteId}
@@ -895,12 +724,10 @@ const Students = () => {
 
       />
 
-
     </DashboardLayout>
 
   );
 
 };
-
 
 export default Students;

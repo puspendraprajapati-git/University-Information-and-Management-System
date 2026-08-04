@@ -10,11 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Department {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long deptId;
+public class Department extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String deptName;

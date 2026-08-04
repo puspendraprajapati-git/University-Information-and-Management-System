@@ -7,7 +7,6 @@ import com.university.exception.ResourceNotFoundException;
 import com.university.repository.DepartmentRepository;
 import com.university.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,36 +17,50 @@ import java.util.stream.Collectors;
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-    private final ModelMapper modelMapper;
 
+    /*
+     * Method to create a new department
+     */
     @Override
     public DepartmentDTO createDepartment(DepartmentDTO dto) {
         if (departmentRepository.findByDeptCode(dto.getDeptCode()) != null) {
             throw new DuplicateResourceException("Department code already exists: " + dto.getDeptCode());
         }
 
-        Department department = modelMapper.map(dto, Department.class);
-        department.setDeptId(null); // ensure insert, not update
+        Department department = Department.builder()
+                .deptName(dto.getDeptName())
+                .deptCode(dto.getDeptCode())
+                .hodId(dto.getHodId())
+                .build();
 
         Department saved = departmentRepository.save(department);
-        return modelMapper.map(saved, DepartmentDTO.class);
+        return mapToResponse(saved);
     }
 
+    /*
+     * Method to get department by ID
+     */
     @Override
     public DepartmentDTO getDepartmentById(Long id) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + id));
-        return modelMapper.map(department, DepartmentDTO.class);
+        return mapToResponse(department);
     }
 
+    /*
+     * Method to get all departments
+     */
     @Override
     public List<DepartmentDTO> getAllDepartments() {
         return departmentRepository.findAll()
                 .stream()
-                .map(dept -> modelMapper.map(dept, DepartmentDTO.class))
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to update department
+     */
     @Override
     public DepartmentDTO updateDepartment(Long id, DepartmentDTO dto) {
         Department existing = departmentRepository.findById(id)
@@ -58,14 +71,26 @@ public class DepartmentServiceImpl implements DepartmentService {
         existing.setHodId(dto.getHodId());
 
         Department updated = departmentRepository.save(existing);
-        return modelMapper.map(updated, DepartmentDTO.class);
+        return mapToResponse(updated);
     }
 
+    /*
+     * Method to delete department
+     */
     @Override
     public void deleteDepartment(Long id) {
         if (!departmentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Department not found with id: " + id);
         }
         departmentRepository.deleteById(id);
+    }
+    
+    private DepartmentDTO mapToResponse(Department department) {
+        return new DepartmentDTO(
+                department.getId(),
+                department.getDeptName(),
+                department.getDeptCode(),
+                department.getHodId()
+        );
     }
 }

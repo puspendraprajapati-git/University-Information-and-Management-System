@@ -4,27 +4,38 @@ import { ToastContainer } from 'react-toastify';
 
 import { AuthProvider } from './context/AuthContext';
 
-// Authentication pages
+import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
-// Route protection for role-based access
 import ProtectedRoute from './components/common/ProtectedRoute';
 
-// Common dashboard layout
 import DashboardLayout from './components/layout/DashboardLayout';
 
-// Sidebar menu links for different user roles
 import { adminLinks, facultyLinks, studentLinks } from './components/layout/Sidebar';
 
+import AdminDepartments from './pages/admin/Departments';
+import AdminSemesters from './pages/admin/Semesters';
+import AdminSubjects from './pages/admin/Subjects';
+import AdminFaculty from './pages/admin/Faculty';
+import AdminStudents from './pages/admin/Students';
+
+import FacultyProfile from './pages/faculty/Profile';
+import FacultyAttendance from './pages/faculty/Attendance';
+import FacultyResult from './pages/faculty/Result';
+import FacultyEvents from './pages/faculty/Events';
+
+import StudentProfile from './pages/student/Profile';
+import StudentAttendance from './pages/student/Attendance';
+import StudentResults from './pages/student/Results';
+import StudentEvents from './pages/student/Events';
 
 function App() {
   return (
-    // AuthProvider makes login user data available throughout the application
     <AuthProvider>
       <BrowserRouter>
 
-        {/* Global toast notification container */}
+        {}
         <ToastContainer 
           position="top-right" 
           autoClose={3000} 
@@ -32,12 +43,11 @@ function App() {
 
         <Routes>
 
-          {/* Public routes */}
+          {}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-
-          {/* Admin dashboard - accessible only for ADMIN role */}
+          {}
           <Route
             path="/admin/dashboard"
             element={
@@ -52,9 +62,13 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/admin/departments" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminDepartments /></ProtectedRoute>} />
+          <Route path="/admin/semesters" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminSemesters /></ProtectedRoute>} />
+          <Route path="/admin/subjects" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminSubjects /></ProtectedRoute>} />
+          <Route path="/admin/faculty" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminFaculty /></ProtectedRoute>} />
+          <Route path="/admin/students" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminStudents /></ProtectedRoute>} />
 
-
-          {/* Faculty dashboard - accessible only for FACULTY role */}
+          {}
           <Route
             path="/faculty/dashboard"
             element={
@@ -69,9 +83,12 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/faculty/profile" element={<ProtectedRoute allowedRoles={['FACULTY']}><FacultyProfile /></ProtectedRoute>} />
+          <Route path="/faculty/attendance" element={<ProtectedRoute allowedRoles={['FACULTY']}><FacultyAttendance /></ProtectedRoute>} />
+          <Route path="/faculty/results" element={<ProtectedRoute allowedRoles={['FACULTY']}><FacultyResult /></ProtectedRoute>} />
+          <Route path="/faculty/events" element={<ProtectedRoute allowedRoles={['FACULTY']}><FacultyEvents /></ProtectedRoute>} />
 
-
-          {/* Student dashboard - accessible only for STUDENT role */}
+          {}
           <Route
             path="/student/dashboard"
             element={
@@ -86,9 +103,12 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/student/profile" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentProfile /></ProtectedRoute>} />
+          <Route path="/student/attendance" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAttendance /></ProtectedRoute>} />
+          <Route path="/student/results" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentResults /></ProtectedRoute>} />
+          <Route path="/student/events" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentEvents /></ProtectedRoute>} />
 
-
-          {/* Access denied page */}
+          {}
           <Route
             path="/unauthorized"
             element={
@@ -98,9 +118,9 @@ function App() {
             }
           />
 
-
-          {/* Redirect unknown paths to login page */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {}
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
 
         </Routes>
 

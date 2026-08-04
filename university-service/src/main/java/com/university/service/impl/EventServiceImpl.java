@@ -23,6 +23,9 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final FacultyRepository facultyRepository;
 
+    /*
+     * Method to create a new event
+     */
     @Override
     @Transactional
     public EventRespDTO createEvent(EventReqDTO dto) {
@@ -43,6 +46,9 @@ public class EventServiceImpl implements EventService {
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to update an existing event
+     */
     @Override
     @Transactional
     public EventRespDTO updateEvent(Long id, EventReqDTO dto) {
@@ -64,6 +70,9 @@ public class EventServiceImpl implements EventService {
         return mapToResponse(updated);
     }
 
+    /*
+     * Method to get event by ID
+     */
     @Override
     public EventRespDTO getEventById(Long id) {
         Event event = eventRepository.findById(id)
@@ -71,6 +80,9 @@ public class EventServiceImpl implements EventService {
         return mapToResponse(event);
     }
 
+    /*
+     * Method to get all events
+     */
     @Override
     public List<EventRespDTO> getAllEvents() {
         return eventRepository.findAll()
@@ -79,6 +91,9 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get events by type
+     */
     @Override
     public List<EventRespDTO> getEventsByType(EventType type) {
         return eventRepository.findByType(type)
@@ -87,6 +102,9 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to delete an event
+     */
     @Override
     public void deleteEvent(Long id) {
         if (!eventRepository.existsById(id)) {
@@ -95,14 +113,17 @@ public class EventServiceImpl implements EventService {
         eventRepository.deleteById(id);
     }
 
+    /*
+     * Helper method to map entity to response
+     */
     private EventRespDTO mapToResponse(Event event) {
         return new EventRespDTO(
-                event.getEventId(),
+                event.getId(),
                 event.getTitle(),
                 event.getDescription(),
                 event.getEventDate(),
                 event.getVenue(),
-                event.getOrganizer().getFacultyId(),
+                event.getOrganizer().getId(),
                 event.getOrganizer().getFullName(),
                 event.getType(),
                 event.getFilePath()

@@ -26,6 +26,10 @@ public class SubjectServiceImpl implements SubjectService {
     private final SemesterRepository semesterRepository;
     private final DepartmentRepository departmentRepository;
 
+    /*
+     * Method to create a new subject
+     * Includes validation for duplicate subject code
+     */
     @Override
     @Transactional
     public SubjectRespDTO createSubject(SubjectReqDTO dto) {
@@ -53,6 +57,9 @@ public class SubjectServiceImpl implements SubjectService {
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to get a subject by ID
+     */
     @Override
     public SubjectRespDTO getSubjectById(Long id) {
         Subject subject = subjectRepository.findById(id)
@@ -60,6 +67,9 @@ public class SubjectServiceImpl implements SubjectService {
         return mapToResponse(subject);
     }
 
+    /*
+     * Method to get all subjects
+     */
     @Override
     public List<SubjectRespDTO> getAllSubjects() {
         return subjectRepository.findAll()
@@ -68,22 +78,31 @@ public class SubjectServiceImpl implements SubjectService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get subjects by semester ID
+     */
     @Override
     public List<SubjectRespDTO> getSubjectsBySemester(Long semesterId) {
-        return subjectRepository.findBySemester_SemesterId(semesterId)
+        return subjectRepository.findBySemester_Id(semesterId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get subjects by department ID
+     */
     @Override
     public List<SubjectRespDTO> getSubjectsByDepartment(Long deptId) {
-        return subjectRepository.findByDepartment_DeptId(deptId)
+        return subjectRepository.findByDepartment_Id(deptId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to update an existing subject
+     */
     @Override
     @Transactional
     public SubjectRespDTO updateSubject(Long id, SubjectReqDTO dto) {
@@ -107,6 +126,9 @@ public class SubjectServiceImpl implements SubjectService {
         return mapToResponse(updated);
     }
 
+    /*
+     * Method to delete a subject by ID
+     */
     @Override
     public void deleteSubject(Long id) {
         if (!subjectRepository.existsById(id)) {
@@ -115,14 +137,17 @@ public class SubjectServiceImpl implements SubjectService {
         subjectRepository.deleteById(id);
     }
 
+    /*
+     * Helper method to map entity to DTO
+     */
     private SubjectRespDTO mapToResponse(Subject subject) {
         return new SubjectRespDTO(
-                subject.getSubjectId(),
+                subject.getId(),
                 subject.getSubjectCode(),
                 subject.getSubjectName(),
-                subject.getSemester().getSemesterId(),
+                subject.getSemester().getId(),
                 subject.getSemester().getSemesterName(),
-                subject.getDepartment().getDeptId(),
+                subject.getDepartment().getId(),
                 subject.getDepartment().getDeptName(),
                 subject.getSyllabusPath(),
                 subject.getCredits()

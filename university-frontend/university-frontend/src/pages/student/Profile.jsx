@@ -11,12 +11,15 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch latest data from server
     const fetchProfile = async () => {
       try {
         const res = await getStudentById(user.userId);
         setProfile(res.data);
       } catch (err) {
-        toast.error('Failed to load profile. Your student record may not be set up yet — contact admin.');
+        if (err.response?.status !== 404) {
+          toast.error('Failed to load profile. Please check your connection.');
+        }
       } finally {
         setLoading(false);
       }

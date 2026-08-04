@@ -11,11 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Semester {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long semesterId;
+public class Semester extends BaseEntity {
 
     @Column(nullable = false)
     private String semesterName;

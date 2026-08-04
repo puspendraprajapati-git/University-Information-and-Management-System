@@ -10,11 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Result {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long resultId;
+public class Result extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)

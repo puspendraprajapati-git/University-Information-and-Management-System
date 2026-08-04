@@ -23,6 +23,9 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final FacultyRepository facultyRepository;
     private final SemesterRepository semesterRepository;
 
+    /*
+     * Method to mark attendance for a student
+     */
     @Override
     @Transactional
     public AttendanceRespDTO markAttendance(AttendanceReqDTO dto) {
@@ -51,6 +54,9 @@ public class AttendanceServiceImpl implements AttendanceService {
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to update an existing attendance record
+     */
     @Override
     @Transactional
     public AttendanceRespDTO updateAttendance(Long id, AttendanceReqDTO dto) {
@@ -80,6 +86,9 @@ public class AttendanceServiceImpl implements AttendanceService {
         return mapToResponse(updated);
     }
 
+    /*
+     * Method to get attendance record by ID
+     */
     @Override
     public AttendanceRespDTO getAttendanceById(Long id) {
         Attendance attendance = attendanceRepository.findById(id)
@@ -87,6 +96,9 @@ public class AttendanceServiceImpl implements AttendanceService {
         return mapToResponse(attendance);
     }
 
+    /*
+     * Method to get all attendance records
+     */
     @Override
     public List<AttendanceRespDTO> getAllAttendance() {
         return attendanceRepository.findAll()
@@ -95,22 +107,31 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get attendance records by student ID
+     */
     @Override
     public List<AttendanceRespDTO> getAttendanceByStudent(Long studentId) {
-        return attendanceRepository.findByStudent_StudentId(studentId)
+        return attendanceRepository.findByStudent_Id(studentId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to get attendance records by subject and semester ID
+     */
     @Override
     public List<AttendanceRespDTO> getAttendanceBySubjectAndSemester(Long subjectId, Long semesterId) {
-        return attendanceRepository.findBySubject_SubjectIdAndSemester_SemesterId(subjectId, semesterId)
+        return attendanceRepository.findBySubject_IdAndSemester_Id(subjectId, semesterId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to delete an attendance record
+     */
     @Override
     public void deleteAttendance(Long id) {
         if (!attendanceRepository.existsById(id)) {
@@ -119,16 +140,19 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendanceRepository.deleteById(id);
     }
 
+    /*
+     * Helper method to map entity to response
+     */
     private AttendanceRespDTO mapToResponse(Attendance attendance) {
         return new AttendanceRespDTO(
-                attendance.getAttendanceId(),
-                attendance.getStudent().getStudentId(),
+                attendance.getId(),
+                attendance.getStudent().getId(),
                 attendance.getStudent().getFullName(),
-                attendance.getSubject().getSubjectId(),
+                attendance.getSubject().getId(),
                 attendance.getSubject().getSubjectName(),
-                attendance.getFaculty().getFacultyId(),
+                attendance.getFaculty().getId(),
                 attendance.getFaculty().getFullName(),
-                attendance.getSemester().getSemesterId(),
+                attendance.getSemester().getId(),
                 attendance.getSemester().getSemesterName(),
                 attendance.getAttendanceDate(),
                 attendance.getStatus()

@@ -10,6 +10,7 @@ const Events = () => {
   const [filterType, setFilterType] = useState('ALL');
 
   useEffect(() => {
+    // Fetch latest data from server
     const fetchEvents = async () => {
       try {
         const res = await getAllEvents();
@@ -25,6 +26,7 @@ const Events = () => {
 
   const filteredEvents = filterType === 'ALL' ? events : events.filter((e) => e.type === filterType);
 
+  // Execute type badge function
   const typeBadge = (type) => {
     const colors = { EVENT: 'bg-primary', NEWS: 'bg-warning text-dark', SYLLABUS: 'bg-success' };
     return <span className={`badge ${colors[type] || 'bg-secondary'}`}>{type}</span>;

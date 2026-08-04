@@ -12,8 +12,6 @@ import { getAllSubjects } from '../../services/subjectService';
 import { getAllSemesters } from '../../services/semesterService';
 import { getAllStudents } from '../../services/studentService';
 
-// default shape of the mark/edit form - keeping it outside the
-// component so it doesn't get recreated on every render
 const emptyForm = {
   studentId: '',
   subjectId: '',
@@ -24,29 +22,23 @@ const emptyForm = {
 };
 
 const Attendance = () => {
-  // logged in faculty - needed so we know who is marking attendance
   const { user } = useAuth();
 
-  // dropdown data for the filters and the mark/edit form
   const [subjects, setSubjects] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [students, setStudents] = useState([]);
 
-  // attendance records currently shown in the table
   const [records, setRecords] = useState([]);
 
-  // which subject/semester the faculty picked to view attendance for
   const [filterSubject, setFilterSubject] = useState('');
   const [filterSemester, setFilterSemester] = useState('');
 
-  // modal + form state
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null); // null = creating new, else editing this record
   const [loading, setLoading] = useState(false);
 
-  // load subjects, semesters and students once when the page opens
-  // these rarely change so no point re-fetching them every time
+  // Fetch latest data from server
   const fetchDropdownData = async () => {
     try {
       const [subRes, semRes, stuRes] = await Promise.all([
@@ -66,8 +58,7 @@ const Attendance = () => {
     fetchDropdownData();
   }, []); // run only on first mount
 
-  // pulls attendance records for whatever subject + semester is
-  // currently selected in the filters
+  // Fetch latest data from server
   const fetchRecords = async () => {
     if (!filterSubject || !filterSemester) {
       toast.info('Select a subject and semester to view attendance');
@@ -85,8 +76,7 @@ const Attendance = () => {
     }
   };
 
-  // opens the modal in "create" mode, pre-filling subject/semester
-  // from the current filters and defaulting the date to today
+  // Open create modal dialog
   const openCreateModal = () => {
     setFormData({
       ...emptyForm,
@@ -99,7 +89,7 @@ const Attendance = () => {
     setShowModal(true);
   };
 
-  // opens the modal in "edit" mode with the selected row's data
+  // Open edit modal dialog
   const openEditModal = (record) => {
     setFormData({
       studentId: record.studentId,
@@ -113,19 +103,15 @@ const Attendance = () => {
     setShowModal(true);
   };
 
-  // generic input handler - works for every field in the form since
-  // we're using the input's "name" attribute as the key
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // submits the form - either creates a new attendance record or
-  // updates the one we're currently editing
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // form values come in as strings, so cast the ids to numbers
-    // before sending to the backend
     const payload = {
       studentId: Number(formData.studentId),
       subjectId: Number(formData.subjectId),
@@ -155,7 +141,7 @@ const Attendance = () => {
     <DashboardLayout links={facultyLinks}>
       <h3 className="mb-3">Attendance</h3>
 
-      {/* filters row - subject + semester + view/mark buttons */}
+      {}
       <div className="row g-2 mb-3">
         <div className="col-md-4">
           <select
@@ -194,8 +180,7 @@ const Attendance = () => {
         </div>
 
         <div className="col-md-2">
-          {/* mark button stays disabled until both filters are picked,
-              since attendance always needs a subject + semester context */}
+          {}
           <button
             className="btn btn-primary w-100"
             onClick={openCreateModal}
@@ -206,7 +191,7 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* attendance table */}
+      {}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -229,7 +214,7 @@ const Attendance = () => {
                 <td>{r.subjectName}</td>
                 <td>{r.attendanceDate}</td>
                 <td>
-                  {/* green badge for present, red for absent */}
+                  {}
                   <span className={`badge ${r.status === 'PRESENT' ? 'bg-success' : 'bg-danger'}`}>
                     {r.status}
                   </span>
@@ -242,7 +227,7 @@ const Attendance = () => {
               </tr>
             ))}
 
-            {/* empty state when nothing has been loaded/selected yet */}
+            {}
             {records.length === 0 && (
               <tr>
                 <td colSpan="6" className="text-center">
@@ -254,7 +239,7 @@ const Attendance = () => {
         </table>
       )}
 
-      {/* mark / edit modal - reused for both actions, "editingId" decides the mode */}
+      {}
       {showModal && (
         <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog">
@@ -268,8 +253,7 @@ const Attendance = () => {
                 <div className="modal-body">
                   <div className="mb-3">
                     <label className="form-label">Student</label>
-                    {/* student can't be changed once a record exists,
-                        so we lock this field while editing */}
+                    {}
                     <select
                       className="form-select"
                       name="studentId"

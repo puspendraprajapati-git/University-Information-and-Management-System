@@ -21,6 +21,7 @@ const StudentFees = () => {
     }
   }, [user]);
 
+  // Fetch latest data from server
   const fetchFees = async () => {
     try {
       setLoading(true);
@@ -34,12 +35,14 @@ const StudentFees = () => {
     }
   };
 
+  // Handle pay click action
   const handlePayClick = (fee) => {
     setSelectedFee(fee);
     setPaymentAmount((fee.totalAmount - fee.paidAmount).toFixed(2));
     setShowPaymentModal(true);
   };
 
+  // Execute submit payment function
   const submitPayment = async (e) => {
     e.preventDefault();
     try {
@@ -60,6 +63,7 @@ const StudentFees = () => {
     }
   };
 
+  // Fetch latest data from server
   const getStatusBadge = (status) => {
     switch (status) {
       case 'PAID': return 'success';
@@ -130,7 +134,7 @@ const StudentFees = () => {
         </div>
       )}
 
-      {/* Payment Modal */}
+      {}
       <Modal show={showPaymentModal} onHide={() => !paymentProcessing && setShowPaymentModal(false)}>
         <Modal.Header closeButton={!paymentProcessing}>
           <Modal.Title>Make a Payment</Modal.Title>

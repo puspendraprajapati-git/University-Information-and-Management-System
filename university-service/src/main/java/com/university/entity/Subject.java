@@ -10,11 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Subject {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subjectId;
+public class Subject extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String subjectCode;

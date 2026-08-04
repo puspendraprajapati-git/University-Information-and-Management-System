@@ -27,6 +27,9 @@ public class StudentServiceImpl implements StudentService {
     private final UsersRepository usersRepository;
     private final DepartmentRepository departmentRepository;
 
+    /*
+     * Method to create a new student
+     */
     @Override
     @Transactional
     public StudentRespDTO createStudent(StudentReqDTO dto) {
@@ -61,6 +64,9 @@ public class StudentServiceImpl implements StudentService {
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to get student by ID
+     */
     @Override
     public StudentRespDTO getStudentById(Long id) {
         Student student = studentRepository.findById(id)
@@ -68,6 +74,9 @@ public class StudentServiceImpl implements StudentService {
         return mapToResponse(student);
     }
 
+    /*
+     * Method to get all students
+     */
     @Override
     public List<StudentRespDTO> getAllStudents() {
         return studentRepository.findAll()
@@ -76,6 +85,9 @@ public class StudentServiceImpl implements StudentService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to update existing student
+     */
     @Override
     @Transactional
     public StudentRespDTO updateStudent(Long id, StudentReqDTO dto) {
@@ -95,6 +107,9 @@ public class StudentServiceImpl implements StudentService {
         return mapToResponse(updated);
     }
 
+    /*
+     * Method to delete a student
+     */
     @Override
     public void deleteStudent(Long id) {
         if (!studentRepository.existsById(id)) {
@@ -103,6 +118,9 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.deleteById(id);
     }
 
+    /*
+     * Method to search student by name
+     */
     @Override
     public List<StudentRespDTO> searchByName(String name) {
         return studentRepository.findAll()
@@ -112,12 +130,15 @@ public class StudentServiceImpl implements StudentService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Helper method to map entity to response
+     */
     private StudentRespDTO mapToResponse(Student student) {
         return new StudentRespDTO(
-                student.getStudentId(),
+                student.getId(),
                 student.getEnrollmentNo(),
                 student.getFullName(),
-                student.getDepartment().getDeptId(),
+                student.getDepartment().getId(),
                 student.getDepartment().getDeptName(),
                 student.getCurrentSemester(),
                 student.getDateOfBirth(),

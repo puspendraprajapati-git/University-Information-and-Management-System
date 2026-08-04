@@ -27,6 +27,9 @@ public class FacultyServiceImpl implements FacultyService {
     private final UsersRepository usersRepository;
     private final DepartmentRepository departmentRepository;
 
+    /*
+     * Method to create a new faculty profile
+     */
     @Override
     @Transactional
     public FacultyRespDTO createFaculty(FacultyReqDTO dto) {
@@ -55,6 +58,9 @@ public class FacultyServiceImpl implements FacultyService {
         return mapToResponse(saved);
     }
 
+    /*
+     * Method to get faculty by ID
+     */
     @Override
     public FacultyRespDTO getFacultyById(Long id) {
         Faculty faculty = facultyRepository.findById(id)
@@ -62,6 +68,9 @@ public class FacultyServiceImpl implements FacultyService {
         return mapToResponse(faculty);
     }
 
+    /*
+     * Method to get all faculty
+     */
     @Override
     public List<FacultyRespDTO> getAllFaculty() {
         return facultyRepository.findAll()
@@ -70,6 +79,9 @@ public class FacultyServiceImpl implements FacultyService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Method to update existing faculty
+     */
     @Override
     @Transactional
     public FacultyRespDTO updateFaculty(Long id, FacultyReqDTO dto) {
@@ -87,6 +99,9 @@ public class FacultyServiceImpl implements FacultyService {
         return mapToResponse(updated);
     }
 
+    /*
+     * Method to delete a faculty profile
+     */
     @Override
     public void deleteFaculty(Long id) {
         if (!facultyRepository.existsById(id)) {
@@ -95,11 +110,14 @@ public class FacultyServiceImpl implements FacultyService {
         facultyRepository.deleteById(id);
     }
 
+    /*
+     * Helper method to map entity to response
+     */
     private FacultyRespDTO mapToResponse(Faculty faculty) {
         return new FacultyRespDTO(
-                faculty.getFacultyId(),
+                faculty.getId(),
                 faculty.getFullName(),
-                faculty.getDepartment().getDeptId(),
+                faculty.getDepartment().getId(),
                 faculty.getDepartment().getDeptName(),
                 faculty.getQualification(),
                 faculty.getUser().getUsername(),

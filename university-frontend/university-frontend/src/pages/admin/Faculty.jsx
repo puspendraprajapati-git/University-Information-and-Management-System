@@ -14,7 +14,6 @@ import {
 import { getAllDepartments } from "../../services/departmentService";
 import { getAllUsers } from "../../services/userService";
 
-// Default values for faculty form
 const emptyForm = {
   userId: "",
   fullName: "",
@@ -22,35 +21,25 @@ const emptyForm = {
   qualification: "",
 };
 
-
 const Faculty = () => {
 
-  // Store faculty records
   const [facultyList, setFacultyList] = useState([]);
 
-  // Store department list for dropdown
   const [departments, setDepartments] = useState([]);
 
-  // Store users who can be assigned as faculty
   const [availableUsers, setAvailableUsers] = useState([]);
 
-  // Show loading state while fetching data
   const [loading, setLoading] = useState(true);
 
-  // Control add/edit modal visibility
   const [showModal, setShowModal] = useState(false);
 
-  // Store form values
   const [formData, setFormData] = useState(emptyForm);
 
-  // Store faculty id while editing
   const [editingId, setEditingId] = useState(null);
 
-  // Store selected faculty id for deletion
   const [deleteId, setDeleteId] = useState(null);
 
-
-  // Fetch faculty, department and user data
+  // Fetch latest data from server
   const fetchAll = async () => {
     setLoading(true);
 
@@ -64,7 +53,6 @@ const Faculty = () => {
       setFacultyList(facRes.data);
       setDepartments(deptRes.data);
 
-      // Find users who have FACULTY role but no faculty profile yet
       const existingFacultyIds = facRes.data.map(
         (faculty) => faculty.facultyId
       );
@@ -84,22 +72,18 @@ const Faculty = () => {
     }
   };
 
-
-  // Load data when component starts
   useEffect(() => {
     fetchAll();
   }, []);
 
-
-  // Open modal for adding new faculty
+  // Open create modal dialog
   const openCreateModal = () => {
     setFormData(emptyForm);
     setEditingId(null);
     setShowModal(true);
   };
 
-
-  // Open modal with existing faculty details
+  // Open edit modal dialog
   const openEditModal = (fac) => {
     setFormData({
       userId: fac.facultyId,
@@ -112,8 +96,7 @@ const Faculty = () => {
     setShowModal(true);
   };
 
-
-  // Update form values when user enters data
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -121,12 +104,10 @@ const Faculty = () => {
     });
   };
 
-
-  // Handle create and update faculty operations
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare data before sending to backend
     const payload = {
       userId: Number(formData.userId),
       fullName: formData.fullName,
@@ -137,12 +118,10 @@ const Faculty = () => {
     try {
 
       if (editingId) {
-        // Update existing faculty
         await updateFaculty(editingId, payload);
         toast.success("Faculty updated");
 
       } else {
-        // Create new faculty
         await createFaculty(payload);
         toast.success("Faculty created");
       }
@@ -157,8 +136,7 @@ const Faculty = () => {
     }
   };
 
-
-  // Delete selected faculty member
+  // Handle delete action 
   const handleDelete = async () => {
     try {
       await deleteFaculty(deleteId);
@@ -175,11 +153,10 @@ const Faculty = () => {
     }
   };
 
-
   return (
     <DashboardLayout>
 
-      {/* Page header */}
+      {}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>Faculty</h3>
 
@@ -191,8 +168,7 @@ const Faculty = () => {
         </button>
       </div>
 
-
-      {/* Faculty table */}
+      {}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -209,7 +185,6 @@ const Faculty = () => {
               <th>Actions</th>
             </tr>
           </thead>
-
 
           <tbody>
 
@@ -231,7 +206,6 @@ const Faculty = () => {
                     Edit
                   </button>
 
-
                   <button
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => setDeleteId(fac.facultyId)}
@@ -244,8 +218,7 @@ const Faculty = () => {
               </tr>
             ))}
 
-
-            {/* Show message when faculty list is empty */}
+            {}
             {facultyList.length === 0 && (
               <tr>
                 <td colSpan="6" className="text-center">
@@ -259,8 +232,7 @@ const Faculty = () => {
         </table>
       )}
 
-
-      {/* Add and update faculty modal */}
+      {}
       {showModal && (
         <div
           className="modal show d-block"
@@ -279,7 +251,6 @@ const Faculty = () => {
                     {editingId ? "Edit Faculty" : "Add Faculty"}
                   </h5>
 
-
                   <button
                     type="button"
                     className="btn-close"
@@ -288,17 +259,15 @@ const Faculty = () => {
 
                 </div>
 
-
                 <div className="modal-body">
 
-                  {/* User selection only required while creating */}
+                  {}
                   {!editingId && (
                     <div className="mb-3">
 
                       <label className="form-label">
                         User Account (must have role FACULTY)
                       </label>
-
 
                       <select
                         className="form-select"
@@ -323,7 +292,6 @@ const Faculty = () => {
 
                       </select>
 
-
                       {availableUsers.length === 0 && (
                         <small className="text-danger">
                           No unassigned FACULTY-role users. Register one first.
@@ -332,7 +300,6 @@ const Faculty = () => {
 
                     </div>
                   )}
-
 
                   <div className="mb-3">
 
@@ -351,13 +318,11 @@ const Faculty = () => {
 
                   </div>
 
-
                   <div className="mb-3">
 
                     <label className="form-label">
                       Department
                     </label>
-
 
                     <select
                       className="form-select"
@@ -384,13 +349,11 @@ const Faculty = () => {
 
                   </div>
 
-
                   <div className="mb-3">
 
                     <label className="form-label">
                       Qualification
                     </label>
-
 
                     <input
                       type="text"
@@ -402,9 +365,7 @@ const Faculty = () => {
 
                   </div>
 
-
                 </div>
-
 
                 <div className="modal-footer">
 
@@ -415,7 +376,6 @@ const Faculty = () => {
                   >
                     Cancel
                   </button>
-
 
                   <button
                     type="submit"
@@ -435,8 +395,7 @@ const Faculty = () => {
         </div>
       )}
 
-
-      {/* Delete confirmation */}
+      {}
       <ConfirmModal
         show={!!deleteId}
         title="Delete Faculty"

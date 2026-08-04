@@ -15,6 +15,7 @@ const Results = () => {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    // Fetch latest data from server
     const fetchSemesters = async () => {
       try {
         const res = await getAllSemesters();
@@ -29,6 +30,7 @@ const Results = () => {
 
   useEffect(() => {
     if (!selectedSemester) return;
+    // Fetch latest data from server
     const fetchResult = async () => {
       setLoading(true);
       setNotFound(false);
@@ -45,6 +47,7 @@ const Results = () => {
     fetchResult();
   }, [selectedSemester, user.userId]);
 
+  // Execute grade badge function
   const gradeBadge = (grade) => {
     const colors = { O: 'bg-success', 'A+': 'bg-success', A: 'bg-primary', 'B+': 'bg-info text-dark', B: 'bg-warning text-dark', C: 'bg-secondary', F: 'bg-danger' };
     return <span className={`badge ${colors[grade] || 'bg-secondary'}`}>{grade}</span>;

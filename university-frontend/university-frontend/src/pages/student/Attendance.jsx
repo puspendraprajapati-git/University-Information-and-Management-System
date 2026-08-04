@@ -11,6 +11,7 @@ const Attendance = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch latest data from server
     const fetchAttendance = async () => {
       try {
         const res = await getAttendanceByStudent(user.userId);
@@ -24,7 +25,6 @@ const Attendance = () => {
     fetchAttendance();
   }, [user.userId]);
 
-  // Group by subject to show a quick summary
   const summary = records.reduce((acc, r) => {
     if (!acc[r.subjectName]) acc[r.subjectName] = { present: 0, total: 0 };
     acc[r.subjectName].total += 1;

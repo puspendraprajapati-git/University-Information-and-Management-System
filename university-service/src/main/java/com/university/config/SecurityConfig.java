@@ -46,18 +46,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-        .cors(cors -> cors.configurationSource(request -> {
+        //1. disable CSRF protection
+        http.csrf(AbstractHttpConfigurer::disable);
+        
+        //2. Disable HttpSession creation
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        
+        // CORS config
+        http.cors(cors -> cors.configurationSource(request -> {
             var corsConfig = new org.springframework.web.cors.CorsConfiguration();
             corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:3000"));
             corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             corsConfig.setAllowedHeaders(java.util.List.of("*"));
             corsConfig.setAllowCredentials(true);
             return corsConfig;
-        }))
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+        }));
+
+        /*
+         * 4. Define URL based authorization rules
+         * 4.1 public end points
+         */
+        http.authorizeHttpRequests(auth -> auth
                 // Public endpoints — no token needed
                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()

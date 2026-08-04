@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test") // uses application-test.properties → H2 in-memory DB
-class DepartmentControllerIT {
+class DepartmentControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -25,6 +26,7 @@ class DepartmentControllerIT {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void createDepartment_returns201_andPersists() throws Exception {
         DepartmentDTO dto = new DepartmentDTO(null, "Mechanical Engineering", "ME", null);
 
@@ -37,6 +39,7 @@ class DepartmentControllerIT {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void createDepartment_missingName_returns400WithValidationError() throws Exception {
         DepartmentDTO dto = new DepartmentDTO(null, "", "XX", null);
 
@@ -48,6 +51,7 @@ class DepartmentControllerIT {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     void getDepartmentById_notFound_returns404() throws Exception {
         mockMvc.perform(get("/api/departments/9999"))
                 .andExpect(status().isNotFound())
@@ -55,6 +59,7 @@ class DepartmentControllerIT {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void createDuplicateDeptCode_returns409() throws Exception {
         DepartmentDTO dto = new DepartmentDTO(null, "Civil Engineering", "CIV", null);
 
@@ -72,6 +77,7 @@ class DepartmentControllerIT {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     void getAllDepartments_returnsOkAndList() throws Exception {
         mockMvc.perform(get("/api/departments"))
                 .andExpect(status().isOk())

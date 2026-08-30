@@ -30,4 +30,5 @@ public class Faculty extends BaseEntity {
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     private List<Event> eventsOrganized;
+
 }

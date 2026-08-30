@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: university-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root@123
+      MYSQL_DATABASE: university_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - university-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  backend:
+    build:
+      context: ./university-service
+      dockerfile: Dockerfile
+    container_name: university-service
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root@123
+    depends_on:
+      - db
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  ai-service:
+    build:
+      context: ./university-ai-service
+      dockerfile: Dockerfile
+    container_name: university-ai-service
+    ports:
+      - "8000:8000"
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./university-api-gateway
+      dockerfile: Dockerfile
+    container_name: university-api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - SPRING_BOOT_URL=http://backend:8080
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - backend
+      - ai-service
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./university-frontend/university-frontend
+      dockerfile: Dockerfile
+    container_name: university-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - university-network
+    restart: unless-stopped
+
+volumes:
+  db-data:
+
+networks:
+  university-network:
+    driver: bridge

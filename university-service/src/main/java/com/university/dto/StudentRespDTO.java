@@ -16,7 +16,7 @@ public class StudentRespDTO {
     private String fullName;
     private Long deptId;
     private String deptName;
-    private Integer currentSemester;
+    private Long currentSemesterId;
     private LocalDate dateOfBirth;
     private String username;
     private String email;

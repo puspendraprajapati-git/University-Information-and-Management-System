@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser } from "../../services/authService";
+import axiosInstance from "../../api/axiosInstance";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    confirmPassword: "",
     email: "",
     role: "STUDENT",
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,8 +22,20 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      setLoading(false);
+      return;
+    }
     try {
-      await registerUser(formData);
+      const payload = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        role: formData.role
+      };
+      await registerUser(payload);
       toast.success("Registration successful! Please login.");
       navigate("/login");
     } catch (err) {
@@ -79,6 +92,18 @@ const Register = () => {
             />
           </div>
           <div className="mb-3">
+            <label className="form-label">Confirm Password</label>
+            <input
+              type="password"
+              className="form-control"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              minLength={6}
+            />
+          </div>
+          <div className="mb-3">
             <label className="form-label">Role</label>
             <select
               className="form-select"
@@ -91,6 +116,7 @@ const Register = () => {
               <option value="ADMIN">Admin</option>
             </select>
           </div>
+
           <button type="submit" className="btn btn-success w-100" disabled={loading}>
             {loading ? "Registering..." : "Register"}
           </button>

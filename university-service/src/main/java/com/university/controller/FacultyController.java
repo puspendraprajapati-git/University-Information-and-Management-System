@@ -48,6 +48,13 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getFacultyById(id));
     }
 
+    @GetMapping("/user/{userId}")
+    @Operation(description = "Get faculty by user id")
+    public ResponseEntity<?> getFacultyByUserId(@PathVariable Long userId) {
+        System.out.println("in get faculty by user id " + userId);
+        return ResponseEntity.ok(facultyService.getFacultyByUserId(userId));
+    }
+
     /*
      * URI - /api/faculty
      * Method - GET

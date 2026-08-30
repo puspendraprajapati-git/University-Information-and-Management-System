@@ -21,7 +21,7 @@ public class StudentReqDTO {
     @NotNull(message = "Department id is required")
     private Long deptId;
 
-    private Integer currentSemester;
+    private Long currentSemesterId;
 
     private LocalDate dateOfBirth;
 }

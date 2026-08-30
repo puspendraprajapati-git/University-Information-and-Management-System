@@ -27,6 +27,7 @@ public class Student extends BaseEntity {
     @JoinColumn(name = "dept_id", nullable = false)
     private Department department;
 
+    @Column(name = "current_semester")
     private Integer currentSemester;
 
     private LocalDate dateOfBirth;

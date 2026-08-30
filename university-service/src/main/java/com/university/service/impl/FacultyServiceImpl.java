@@ -69,6 +69,16 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     /*
+     * Method to get faculty by User ID
+     */
+    @Override
+    public FacultyRespDTO getFacultyByUserId(Long userId) {
+        Faculty faculty = facultyRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Faculty not found for user id: " + userId));
+        return mapToResponse(faculty);
+    }
+
+    /*
      * Method to get all faculty
      */
     @Override
@@ -114,14 +124,17 @@ public class FacultyServiceImpl implements FacultyService {
      * Helper method to map entity to response
      */
     private FacultyRespDTO mapToResponse(Faculty faculty) {
+        String username = faculty.getUser() != null ? faculty.getUser().getUsername() : "N/A";
+        String email = faculty.getUser() != null ? faculty.getUser().getEmail() : "N/A";
+        
         return new FacultyRespDTO(
                 faculty.getId(),
                 faculty.getFullName(),
-                faculty.getDepartment().getId(),
-                faculty.getDepartment().getDeptName(),
+                faculty.getDepartment() != null ? faculty.getDepartment().getId() : null,
+                faculty.getDepartment() != null ? faculty.getDepartment().getDeptName() : "N/A",
                 faculty.getQualification(),
-                faculty.getUser().getUsername(),
-                faculty.getUser().getEmail()
+                username,
+                email
         );
     }
 }

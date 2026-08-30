@@ -22,6 +22,7 @@ import com.university.enums.Role;
 import com.university.entity.Student;
 import com.university.entity.Faculty;
 import com.university.entity.Department;
+import com.university.entity.Semester;
 import com.university.repository.StudentRepository;
 import com.university.repository.FacultyRepository;
 import com.university.repository.DepartmentRepository;
@@ -36,12 +37,19 @@ public class UserServiceImpl implements UserService {
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
     private final DepartmentRepository departmentRepository;
+    private final com.university.repository.SemesterRepository semesterRepository;
 
     /*
      * Method to register a new user
      */
     @Override
     public UserResponseDTO register(RegisterRequestDTO request) {
+        if (request.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException("Cannot register as ADMIN directly");
+        }
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
         if (usersRepository.findByUsername(request.getUsername()) != null) {
             throw new DuplicateResourceException("Username already exists");
         }
@@ -59,31 +67,8 @@ public class UserServiceImpl implements UserService {
 
         Users saved = usersRepository.save(user);
 
-        // Auto-create corresponding profile based on role
-        if (saved.getRole() == Role.STUDENT) {
-            Department defaultDept = departmentRepository.findAll().stream().findFirst().orElse(null);
-            if (defaultDept != null) {
-                Student student = Student.builder()
-                        .user(saved)
-                        .fullName(saved.getUsername())
-                        .enrollmentNo("STU" + System.currentTimeMillis())
-                        .department(defaultDept)
-                        .currentSemester(1)
-                        .build();
-                studentRepository.save(student);
-            }
-        } else if (saved.getRole() == Role.FACULTY) {
-            Department defaultDept = departmentRepository.findAll().stream().findFirst().orElse(null);
-            if (defaultDept != null) {
-                Faculty faculty = Faculty.builder()
-                        .user(saved)
-                        .fullName(saved.getUsername())
-                        .department(defaultDept)
-                        .qualification("TBD")
-                        .build();
-                facultyRepository.save(faculty);
-            }
-        }
+        // We no longer auto-create Student/Faculty profiles during registration.
+        // Users will complete their profiles on their first login.
 
         return mapToResponse(saved);
     }
@@ -93,9 +78,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
-        Users user = usersRepository.findByUsername(request.getUsername());
+        Users user = usersRepository.findByEmail(request.getEmail());
         if (user == null) {
-            throw new InvalidCredentialsException("Invalid username or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid username or password");

@@ -9,6 +9,7 @@ import com.university.enums.Role;
 import com.university.exception.DuplicateResourceException;
 import com.university.exception.ResourceNotFoundException;
 import com.university.repository.DepartmentRepository;
+import com.university.repository.SemesterRepository;
 import com.university.repository.StudentRepository;
 import com.university.repository.UsersRepository;
 import com.university.service.StudentService;
@@ -26,6 +27,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final UsersRepository usersRepository;
     private final DepartmentRepository departmentRepository;
+    private final SemesterRepository semesterRepository;
 
     /*
      * Method to create a new student
@@ -56,7 +58,7 @@ public class StudentServiceImpl implements StudentService {
                 .enrollmentNo(dto.getEnrollmentNo())
                 .fullName(dto.getFullName())
                 .department(department)
-                .currentSemester(dto.getCurrentSemester())
+                .currentSemester(dto.getCurrentSemesterId() != null ? dto.getCurrentSemesterId().intValue() : 1)
                 .dateOfBirth(dto.getDateOfBirth())
                 .build();
 
@@ -71,6 +73,16 @@ public class StudentServiceImpl implements StudentService {
     public StudentRespDTO getStudentById(Long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+        return mapToResponse(student);
+    }
+
+    /*
+     * Method to get student by User ID
+     */
+    @Override
+    public StudentRespDTO getStudentByUserId(Long userId) {
+        Student student = studentRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found for user id: " + userId));
         return mapToResponse(student);
     }
 
@@ -100,7 +112,9 @@ public class StudentServiceImpl implements StudentService {
         existing.setFullName(dto.getFullName());
         existing.setEnrollmentNo(dto.getEnrollmentNo());
         existing.setDepartment(department);
-        existing.setCurrentSemester(dto.getCurrentSemester());
+        if (dto.getCurrentSemesterId() != null) {
+            existing.setCurrentSemester(dto.getCurrentSemesterId().intValue());
+        }
         existing.setDateOfBirth(dto.getDateOfBirth());
 
         Student updated = studentRepository.save(existing);
@@ -134,16 +148,19 @@ public class StudentServiceImpl implements StudentService {
      * Helper method to map entity to response
      */
     private StudentRespDTO mapToResponse(Student student) {
+        String username = student.getUser() != null ? student.getUser().getUsername() : "N/A";
+        String email = student.getUser() != null ? student.getUser().getEmail() : "N/A";
+        
         return new StudentRespDTO(
                 student.getId(),
                 student.getEnrollmentNo(),
                 student.getFullName(),
-                student.getDepartment().getId(),
-                student.getDepartment().getDeptName(),
-                student.getCurrentSemester(),
+                student.getDepartment() != null ? student.getDepartment().getId() : null,
+                student.getDepartment() != null ? student.getDepartment().getDeptName() : "N/A",
+                student.getCurrentSemester() != null ? student.getCurrentSemester().longValue() : null,
                 student.getDateOfBirth(),
-                student.getUser().getUsername(),
-                student.getUser().getEmail()
+                username,
+                email
         );
     }
 }

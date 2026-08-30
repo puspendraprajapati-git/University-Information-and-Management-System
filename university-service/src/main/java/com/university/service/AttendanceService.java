@@ -10,6 +10,6 @@ public interface AttendanceService {
     AttendanceRespDTO getAttendanceById(Long id);
     List<AttendanceRespDTO> getAllAttendance();
     List<AttendanceRespDTO> getAttendanceByStudent(Long studentId);
-    List<AttendanceRespDTO> getAttendanceBySubjectAndSemester(Long subjectId, Long semesterId);
+    List<AttendanceRespDTO> getAttendanceBySubject(Long subjectId);
     void deleteAttendance(Long id);
 }

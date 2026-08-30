@@ -34,6 +34,7 @@ class AuthControllerTest {
         dto.setUsername("newuser");
         dto.setEmail("newuser@example.com");
         dto.setPassword("password123");
+        dto.setConfirmPassword("password123");
         dto.setRole(Role.STUDENT);
 
         mockMvc.perform(post("/api/auth/register")
@@ -66,6 +67,7 @@ class AuthControllerTest {
         registerDto.setUsername("loginuser");
         registerDto.setEmail("login@example.com");
         registerDto.setPassword("password123");
+        registerDto.setConfirmPassword("password123");
         registerDto.setRole(Role.STUDENT);
         mockMvc.perform(post("/api/auth/register")
                         .contentType("application/json")
@@ -74,7 +76,7 @@ class AuthControllerTest {
 
         // Then login
         LoginRequestDTO loginDto = new LoginRequestDTO();
-        loginDto.setUsername("loginuser");
+        loginDto.setEmail("login@example.com");
         loginDto.setPassword("password123");
         mockMvc.perform(post("/api/auth/login")
                         .contentType("application/json")

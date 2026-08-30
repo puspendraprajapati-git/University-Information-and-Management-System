@@ -88,17 +88,18 @@ public class AttendanceController {
     }
 
     /*
-     * URI - /api/attendance/subject/{subjectId}/semester/{semesterId}
+     * URI - /api/attendance/section/{sectionId}
      * Method - GET
-     * I/P - subjectId : path var, semesterId : path var (Faculty views attendance)
+     * URI - /api/attendance/subject/{subjectId}
+     * Method - GET
+     * I/P - subjectId : path var (Faculty views attendance)
      * Success resp - SC 200 , + List<dto>
      */
-    @GetMapping("/subject/{subjectId}/semester/{semesterId}")
-    @Operation(description = "Get attendance by subject and semester")
-    public ResponseEntity<?> getAttendanceBySubjectAndSemester(
-            @PathVariable Long subjectId, @PathVariable Long semesterId) {
-        System.out.println("in get attendance by subject " + subjectId + " semester " + semesterId);
-        return ResponseEntity.ok(attendanceService.getAttendanceBySubjectAndSemester(subjectId, semesterId));
+    @GetMapping("/subject/{subjectId}")
+    @Operation(description = "Get attendance by subject")
+    public ResponseEntity<?> getAttendanceBySubject(@PathVariable Long subjectId) {
+        System.out.println("in get attendance by subject " + subjectId);
+        return ResponseEntity.ok(attendanceService.getAttendanceBySubject(subjectId));
     }
 
     /*

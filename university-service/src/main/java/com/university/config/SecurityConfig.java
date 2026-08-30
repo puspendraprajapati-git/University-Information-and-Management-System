@@ -52,15 +52,8 @@ public class SecurityConfig {
         //2. Disable HttpSession creation
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         
-        // CORS config
-        http.cors(cors -> cors.configurationSource(request -> {
-            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-            corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:3000"));
-            corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            corsConfig.setAllowedHeaders(java.util.List.of("*"));
-            corsConfig.setAllowCredentials(true);
-            return corsConfig;
-        }));
+        // Disable CORS since the Node API Gateway handles it
+        http.cors(AbstractHttpConfigurer::disable);
 
         /*
          * 4. Define URL based authorization rules
@@ -69,6 +62,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 // Public endpoints — no token needed
                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                 // Admin-only endpoints for modifying departments and semesters
@@ -90,13 +84,27 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
                 .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
                 .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyRole("ADMIN", "FACULTY")
+                
+                .requestMatchers(HttpMethod.POST, "/api/exams/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.PUT, "/api/exams/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.DELETE, "/api/exams/**").hasAnyRole("ADMIN", "FACULTY")
 
-                // Admin manages students/faculty records
-                .requestMatchers(HttpMethod.POST, "/api/students/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/students/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/course-assignments/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/course-assignments/**").hasRole("ADMIN")
+                
+                .requestMatchers(HttpMethod.POST, "/api/enrollments/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/enrollments/**").hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.POST, "/api/fees/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/fees/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/fees/**").hasRole("ADMIN")
+
+                // Admin manages students/faculty records, but users can create/update their own profiles
+                .requestMatchers(HttpMethod.POST, "/api/students/**").hasAnyRole("ADMIN", "STUDENT")
+                .requestMatchers(HttpMethod.PUT, "/api/students/**").hasAnyRole("ADMIN", "STUDENT")
                 .requestMatchers(HttpMethod.DELETE, "/api/students/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/faculty/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/faculty/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/faculty/**").hasAnyRole("ADMIN", "FACULTY")
+                .requestMatchers(HttpMethod.PUT, "/api/faculty/**").hasAnyRole("ADMIN", "FACULTY")
                 .requestMatchers(HttpMethod.DELETE, "/api/faculty/**").hasRole("ADMIN")
 
                 // Everyone authenticated can GET (view) — attendance, results, events, subjects, students, faculty

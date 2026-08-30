@@ -35,9 +35,7 @@ class DepartmentServiceTest {
     @BeforeEach
     void setUp() {
 
-        departmentService = new DepartmentServiceImpl(
-                departmentRepository
-        );
+        departmentService = new DepartmentServiceImpl(departmentRepository, null);
 
         department = new Department();
         department.setId(1L);

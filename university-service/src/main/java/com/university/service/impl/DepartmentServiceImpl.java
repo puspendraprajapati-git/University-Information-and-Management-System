@@ -5,6 +5,7 @@ import com.university.entity.Department;
 import com.university.exception.DuplicateResourceException;
 import com.university.exception.ResourceNotFoundException;
 import com.university.repository.DepartmentRepository;
+import com.university.repository.FacultyRepository;
 import com.university.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final FacultyRepository facultyRepository;
 
     /*
      * Method to create a new department
@@ -30,8 +32,12 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = Department.builder()
                 .deptName(dto.getDeptName())
                 .deptCode(dto.getDeptCode())
-                .hodId(dto.getHodId())
                 .build();
+                
+        if (dto.getHodId() != null) {
+            department.setHod(facultyRepository.findById(dto.getHodId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + dto.getHodId())));
+        }
 
         Department saved = departmentRepository.save(department);
         return mapToResponse(saved);
@@ -68,7 +74,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         existing.setDeptName(dto.getDeptName());
         existing.setDeptCode(dto.getDeptCode());
-        existing.setHodId(dto.getHodId());
+        
+        if (dto.getHodId() != null) {
+            existing.setHod(facultyRepository.findById(dto.getHodId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + dto.getHodId())));
+        } else {
+            existing.setHod(null);
+        }
 
         Department updated = departmentRepository.save(existing);
         return mapToResponse(updated);
@@ -90,7 +102,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                 department.getId(),
                 department.getDeptName(),
                 department.getDeptCode(),
-                department.getHodId()
+                department.getHod() != null ? department.getHod().getId() : null
         );
     }
 }

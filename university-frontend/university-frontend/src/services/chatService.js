@@ -2,7 +2,7 @@ import axios from "axios";
 
 // This points to the API Gateway's AI proxy route
 const chatAxios = axios.create({
-  baseURL: "http://localhost:5000/ai",
+  baseURL: process.env.REACT_APP_AI_URL || "/ai",
   headers: {
     "Content-Type": "application/json",
   },

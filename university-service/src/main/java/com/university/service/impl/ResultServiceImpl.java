@@ -46,7 +46,9 @@ public class ResultServiceImpl implements ResultService {
         Semester semester = semesterRepository.findById(dto.getSemesterId())
                 .orElseThrow(() -> new ResourceNotFoundException("Semester not found with id: " + dto.getSemesterId()));
 
-        int total = dto.getTheoryMarks() + dto.getPracticalMarks();
+        int theory = dto.getTheoryMarks() != null ? dto.getTheoryMarks() : 0;
+        int practical = dto.getPracticalMarks() != null ? dto.getPracticalMarks() : 0;
+        int total = theory + practical;
         String grade = GradeUtil.calculateGrade(total);
 
         Result result = Result.builder()
@@ -82,7 +84,9 @@ public class ResultServiceImpl implements ResultService {
         Semester semester = semesterRepository.findById(dto.getSemesterId())
                 .orElseThrow(() -> new ResourceNotFoundException("Semester not found with id: " + dto.getSemesterId()));
 
-        int total = dto.getTheoryMarks() + dto.getPracticalMarks();
+        int theory = dto.getTheoryMarks() != null ? dto.getTheoryMarks() : 0;
+        int practical = dto.getPracticalMarks() != null ? dto.getPracticalMarks() : 0;
+        int total = theory + practical;
         String grade = GradeUtil.calculateGrade(total);
 
         existing.setStudent(student);

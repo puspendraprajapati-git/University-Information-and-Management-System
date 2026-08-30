@@ -9,6 +9,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
 import ProtectedRoute from './components/common/ProtectedRoute';
+import Chatbot from './components/common/Chatbot';
 
 import DashboardLayout from './components/layout/DashboardLayout';
 
@@ -124,6 +125,7 @@ function App() {
 
         </Routes>
 
+        <Chatbot />
       </BrowserRouter>
     </AuthProvider>
   );

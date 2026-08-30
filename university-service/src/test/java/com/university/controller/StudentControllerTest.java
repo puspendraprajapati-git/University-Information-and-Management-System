@@ -44,7 +44,7 @@ class StudentControllerTest {
         reqDto.setEnrollmentNo("EN1234");
         reqDto.setFullName("John Doe");
         reqDto.setDeptId(1L);
-        reqDto.setCurrentSemester(1);
+        reqDto.setCurrentSemesterId(1L);
         reqDto.setDateOfBirth(LocalDate.of(2000, 1, 1));
 
         StudentRespDTO respDto = new StudentRespDTO();
@@ -79,7 +79,7 @@ class StudentControllerTest {
         reqDto.setEnrollmentNo("EN1234");
         reqDto.setFullName("John Updated");
         reqDto.setDeptId(1L);
-        reqDto.setCurrentSemester(2);
+        reqDto.setCurrentSemesterId(1L);
 
         StudentRespDTO respDto = new StudentRespDTO();
         respDto.setStudentId(1L);

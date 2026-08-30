@@ -48,6 +48,13 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudentById(id));
     }
 
+    @GetMapping("/user/{userId}")
+    @Operation(description = "Get student by user id")
+    public ResponseEntity<?> getStudentByUserId(@PathVariable Long userId) {
+        System.out.println("in get student by user id " + userId);
+        return ResponseEntity.ok(studentService.getStudentByUserId(userId));
+    }
+
     /*
      * URI - /api/students
      * Method - GET

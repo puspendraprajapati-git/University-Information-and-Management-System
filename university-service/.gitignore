@@ -1,36 +1,17 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
+/.metadata/
+# Eclipse
+.metadata/
 .project
-.settings
-.springBeans
-.sts4-cache
+.classpath
+.settings/
 
-### IntelliJ ###
+# VS Code
+.vscode/
+
+# IntelliJ
 .idea/
 *.iml
 
-### VS Code ###
-.vscode/
-
-### Maven ###
+# Build
 target/
-
-### Logs ###
-*.log
-
-### OS ###
-.DS_Store
-Thumbs.db
-
-### Environment ###
-.env
-
-### Generated ###
 bin/
-out/

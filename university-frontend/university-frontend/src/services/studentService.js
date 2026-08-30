@@ -6,6 +6,7 @@ export const getAllStudents = () => axiosInstance.get('/students');
 
 // Fetch a specific studentbyid by ID
 export const getStudentById = (id) => axiosInstance.get(`/students/${id}`);
+export const getStudentByUserId = (userId) => axiosInstance.get(`/students/user/${userId}`);
 
 // Create a new student record
 export const createStudent = (data) => axiosInstance.post('/students', data);

@@ -20,9 +20,41 @@ public class DataSeeder implements CommandLineRunner {
     private final FacultyRepository facultyRepository;
     private final SemesterRepository semesterRepository;
     private final SubjectRepository subjectRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+        // Create Admin if not exists
+        if (usersRepository.findByUsername("superadmin") == null) {
+            Users admin = Users.builder()
+                    .username("superadmin")
+                    .email("superadmin@university.edu")
+                    .password(passwordEncoder.encode("admin@123"))
+                    .role(Role.ADMIN)
+                    .build();
+            usersRepository.save(admin);
+        }
+
+        if (usersRepository.findByUsername("test_faculty") == null) {
+            Users fac = Users.builder()
+                    .username("test_faculty")
+                    .email("faculty@university.edu")
+                    .password(passwordEncoder.encode("faculty@123"))
+                    .role(Role.FACULTY)
+                    .build();
+            usersRepository.save(fac);
+        }
+
+        if (usersRepository.findByUsername("test_student") == null) {
+            Users stu = Users.builder()
+                    .username("test_student")
+                    .email("student@university.edu")
+                    .password(passwordEncoder.encode("student@123"))
+                    .role(Role.STUDENT)
+                    .build();
+            usersRepository.save(stu);
+        }
+
         // Create Department if not exists
         Department dept = departmentRepository.findByDeptCode("CS");
         if (dept == null) {

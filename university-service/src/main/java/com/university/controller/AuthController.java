@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(description = "Login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO request) {
-        System.out.println("in login user " + request.getUsername());
+        System.out.println("in login user " + request.getEmail());
         return ResponseEntity.ok(userService.login(request));
     }
 

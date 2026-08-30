@@ -1,8 +1,6 @@
 import React from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import Chatbot from "../common/Chatbot";
-
 const DashboardLayout = ({ children, links }) => {
   return (
     <div>
@@ -27,8 +25,6 @@ const DashboardLayout = ({ children, links }) => {
         </div>
       </div>
 
-      {/* Inject AI Chatbot globally on dashboards */}
-      <Chatbot />
     </div>
   );
 };

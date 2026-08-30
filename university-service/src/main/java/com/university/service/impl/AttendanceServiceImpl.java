@@ -119,11 +119,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     /*
-     * Method to get attendance records by subject and semester ID
+     * Method to get attendance records by subject ID
      */
     @Override
-    public List<AttendanceRespDTO> getAttendanceBySubjectAndSemester(Long subjectId, Long semesterId) {
-        return attendanceRepository.findBySubject_IdAndSemester_Id(subjectId, semesterId)
+    public List<AttendanceRespDTO> getAttendanceBySubject(Long subjectId) {
+        return attendanceRepository.findBySubject_Id(subjectId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

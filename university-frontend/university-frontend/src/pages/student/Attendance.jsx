@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { studentLinks } from '../../components/layout/Sidebar';
 import { getAttendanceByStudent } from '../../services/attendanceService';
+import { getStudentByUserId } from '../../services/studentService';
 
 const Attendance = () => {
   const { user } = useAuth();
@@ -14,7 +15,13 @@ const Attendance = () => {
     // Fetch latest data from server
     const fetchAttendance = async () => {
       try {
-        const res = await getAttendanceByStudent(user.userId);
+        const profileRes = await getStudentByUserId(user.userId);
+        if (!profileRes.data) {
+          setLoading(false);
+          return;
+        }
+        const studentId = profileRes.data.studentId;
+        const res = await getAttendanceByStudent(studentId);
         setRecords(res.data);
       } catch (err) {
         toast.error('Failed to load attendance');

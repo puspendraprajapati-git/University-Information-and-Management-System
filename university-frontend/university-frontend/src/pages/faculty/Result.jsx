@@ -33,7 +33,8 @@ const Results = () => {
       setSubjects(subRes.data);
       setSemesters(semRes.data);
     } catch (err) {
-      toast.error('Failed to load results data');
+      console.error(err);
+      toast.error(`Failed to load data: ${err.response?.data?.message || err.message}`);
     } finally {
       setLoading(false);
     }

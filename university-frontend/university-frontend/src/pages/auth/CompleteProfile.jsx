@@ -45,32 +45,40 @@ const CompleteProfile = ({ role }) => {
     setLoading(true);
 
     try {
+      console.log('User in context:', user);
       if (role === 'STUDENT') {
         const payload = {
-          userId: user.userId,
+          userId: user?.userId || user?.id,
           enrollmentNo: "STU" + Date.now(), // Auto-generate
           fullName: formData.fullName,
           deptId: Number(formData.deptId),
           currentSemesterId: formData.currentSemesterId ? Number(formData.currentSemesterId) : null,
           dateOfBirth: formData.dateOfBirth
         };
+        console.log('Student Payload:', payload);
         await axiosInstance.post('/students', payload);
         toast.success("Profile completed successfully!");
         window.location.reload(); // Reload to trigger ProtectedRoute check again
       } else if (role === 'FACULTY') {
         const payload = {
-          userId: user.userId,
+          userId: user?.userId || user?.id,
           fullName: formData.fullName,
           deptId: Number(formData.deptId),
           qualification: formData.qualification
         };
+        console.log('Faculty Payload:', payload);
         await axiosInstance.post('/faculty', payload);
         toast.success("Profile completed successfully!");
         window.location.reload();
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || "Failed to complete profile");
+      const data = err.response?.data;
+      if (data?.validationErrors) {
+        Object.values(data.validationErrors).forEach(msg => toast.error(msg));
+      } else {
+        toast.error(data?.message || "Failed to complete profile");
+      }
     } finally {
       setLoading(false);
     }
@@ -107,7 +115,7 @@ const CompleteProfile = ({ role }) => {
             >
               <option value="">Select Department</option>
               {departments.map((dept) => (
-                <option key={dept.id} value={dept.id}>
+                <option key={dept.deptId} value={dept.deptId}>
                   {dept.deptName}
                 </option>
               ))}
@@ -127,7 +135,7 @@ const CompleteProfile = ({ role }) => {
                 >
                   <option value="">Select Semester</option>
                   {semesters.map((sem) => (
-                    <option key={sem.id} value={sem.id}>
+                    <option key={sem.semesterId} value={sem.semesterId}>
                       {sem.semesterName}
                     </option>
                   ))}

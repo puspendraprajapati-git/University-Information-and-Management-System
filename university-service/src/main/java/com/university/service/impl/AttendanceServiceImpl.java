@@ -90,6 +90,7 @@ public class AttendanceServiceImpl implements AttendanceService {
      * Method to get attendance record by ID
      */
     @Override
+    @Transactional(readOnly = true)
     public AttendanceRespDTO getAttendanceById(Long id) {
         Attendance attendance = attendanceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Attendance not found with id: " + id));
@@ -100,6 +101,7 @@ public class AttendanceServiceImpl implements AttendanceService {
      * Method to get all attendance records
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AttendanceRespDTO> getAllAttendance() {
         return attendanceRepository.findAll()
                 .stream()
@@ -111,6 +113,7 @@ public class AttendanceServiceImpl implements AttendanceService {
      * Method to get attendance records by student ID
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AttendanceRespDTO> getAttendanceByStudent(Long studentId) {
         return attendanceRepository.findByStudent_Id(studentId)
                 .stream()
@@ -122,8 +125,21 @@ public class AttendanceServiceImpl implements AttendanceService {
      * Method to get attendance records by subject ID
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AttendanceRespDTO> getAttendanceBySubject(Long subjectId) {
         return attendanceRepository.findBySubject_Id(subjectId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    /*
+     * Method to get attendance records by subject ID and semester ID
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<AttendanceRespDTO> getAttendanceBySubjectAndSemester(Long subjectId, Long semesterId) {
+        return attendanceRepository.findBySubject_IdAndSemester_Id(subjectId, semesterId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

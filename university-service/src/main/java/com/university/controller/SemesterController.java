@@ -26,6 +26,7 @@ public class SemesterController {
      * Success resp - api resp + SC 201
      * Error resp - SC 400
      */
+    
     @PostMapping
     @Operation(description = "Create semester")
     public ResponseEntity<?> createSemester(@Valid @RequestBody SemesterDTO dto) {

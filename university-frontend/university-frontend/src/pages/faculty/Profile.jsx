@@ -107,7 +107,7 @@ const Profile = () => {
                 <label className="form-label">Department</label>
                 <select className="form-select" name="deptId" value={editData.deptId} onChange={handleChange} required>
                   <option value="">Select Department</option>
-                  {departments.map((d) => <option key={d.id} value={d.id}>{d.deptName}</option>)}
+                  {departments.map((d) => <option key={d.deptId} value={d.deptId}>{d.deptName}</option>)}
                 </select>
               </div>
               <div className="mb-3">

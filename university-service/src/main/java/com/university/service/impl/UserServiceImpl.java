@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new InvalidCredentialsException("Invalid email or password");
         }
+        
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid username or password");
         }

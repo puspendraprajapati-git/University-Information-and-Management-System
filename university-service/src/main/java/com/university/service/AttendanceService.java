@@ -11,5 +11,6 @@ public interface AttendanceService {
     List<AttendanceRespDTO> getAllAttendance();
     List<AttendanceRespDTO> getAttendanceByStudent(Long studentId);
     List<AttendanceRespDTO> getAttendanceBySubject(Long subjectId);
+    List<AttendanceRespDTO> getAttendanceBySubjectAndSemester(Long subjectId, Long semesterId);
     void deleteAttendance(Long id);
 }

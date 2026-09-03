@@ -56,6 +56,7 @@ public class EventController {
      * Success resp - SC 200 , + event resp dto
      * Error resp - SC 404
      */
+    
     @GetMapping("/{id}")
     @Operation(description = "Get event by id")
     public ResponseEntity<?> getEventById(@PathVariable Long id) {

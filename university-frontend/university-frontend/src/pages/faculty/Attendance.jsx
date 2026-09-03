@@ -11,6 +11,7 @@ import {
 import { getAllSubjects } from '../../services/subjectService';
 import { getAllSemesters } from '../../services/semesterService';
 import { getAllStudents } from '../../services/studentService';
+import { getFacultyByUserId } from '../../services/facultyService';
 
 const emptyForm = {
   studentId: '',
@@ -37,20 +38,27 @@ const Attendance = () => {
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null); // null = creating new, else editing this record
   const [loading, setLoading] = useState(false);
+  const [facultyProfile, setFacultyProfile] = useState(null);
 
   // Fetch latest data from server
   const fetchDropdownData = async () => {
     try {
-      const [subRes, semRes, stuRes] = await Promise.all([
+      const [subRes, semRes, stuRes, facRes] = await Promise.all([
         getAllSubjects(),
         getAllSemesters(),
         getAllStudents(),
+        getFacultyByUserId(user.userId),
       ]);
       setSubjects(subRes.data);
       setSemesters(semRes.data);
       setStudents(stuRes.data);
+      setFacultyProfile(facRes.data);
     } catch (err) {
-      toast.error('Failed to load dropdown data');
+      if (err.response?.status === 404) {
+         toast.error('Faculty profile not found. Please complete your profile.');
+      } else {
+         toast.error('Failed to load dropdown data');
+      }
     }
   };
 
@@ -78,9 +86,13 @@ const Attendance = () => {
 
   // Open create modal dialog
   const openCreateModal = () => {
+    if (!facultyProfile) {
+      toast.error("Please complete your faculty profile first.");
+      return;
+    }
     setFormData({
       ...emptyForm,
-      facultyId: user.userId,
+      facultyId: facultyProfile.facultyId,
       subjectId: filterSubject,
       semesterId: filterSemester,
       attendanceDate: new Date().toISOString().split('T')[0], // yyyy-mm-dd

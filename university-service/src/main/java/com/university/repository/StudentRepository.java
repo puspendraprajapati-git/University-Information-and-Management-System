@@ -9,4 +9,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByDepartment_Id(Long deptId);
     List<Student> findByCurrentSemester(Integer semester);
     java.util.Optional<Student> findByUserId(Long userId);
-}
+
+} 

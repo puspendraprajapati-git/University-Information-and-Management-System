@@ -106,6 +106,7 @@ public class ResultServiceImpl implements ResultService {
      * Method to get a result by ID
      */
     @Override
+    @Transactional(readOnly = true)
     public ResultRespDTO getResultById(Long id) {
         Result result = resultRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Result not found with id: " + id));
@@ -116,6 +117,7 @@ public class ResultServiceImpl implements ResultService {
      * Method to get all results
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResultRespDTO> getAllResults() {
         return resultRepository.findAll()
                 .stream()
@@ -127,6 +129,7 @@ public class ResultServiceImpl implements ResultService {
      * Method to get results by student ID
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResultRespDTO> getResultsByStudent(Long studentId) {
         return resultRepository.findByStudent_Id(studentId)
                 .stream()
@@ -138,6 +141,7 @@ public class ResultServiceImpl implements ResultService {
      * Method to get semester result for a student
      */
     @Override
+    @Transactional(readOnly = true)
     public SemesterResultRespDTO getSemesterResult(Long studentId, Long semesterId) {
         List<Result> results = resultRepository.findByStudent_IdAndSemester_Id(studentId, semesterId);
 

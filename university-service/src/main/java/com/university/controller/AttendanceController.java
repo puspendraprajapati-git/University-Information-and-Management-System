@@ -88,8 +88,6 @@ public class AttendanceController {
     }
 
     /*
-     * URI - /api/attendance/section/{sectionId}
-     * Method - GET
      * URI - /api/attendance/subject/{subjectId}
      * Method - GET
      * I/P - subjectId : path var (Faculty views attendance)
@@ -100,6 +98,17 @@ public class AttendanceController {
     public ResponseEntity<?> getAttendanceBySubject(@PathVariable Long subjectId) {
         System.out.println("in get attendance by subject " + subjectId);
         return ResponseEntity.ok(attendanceService.getAttendanceBySubject(subjectId));
+    }
+
+    /*
+     * URI - /api/attendance/subject/{subjectId}/semester/{semesterId}
+     * Method - GET
+     */
+    @GetMapping("/subject/{subjectId}/semester/{semesterId}")
+    @Operation(description = "Get attendance by subject and semester")
+    public ResponseEntity<?> getAttendanceBySubjectAndSemester(@PathVariable Long subjectId, @PathVariable Long semesterId) {
+        System.out.println("in get attendance by subject " + subjectId + " and semester " + semesterId);
+        return ResponseEntity.ok(attendanceService.getAttendanceBySubjectAndSemester(subjectId, semesterId));
     }
 
     /*

@@ -3,6 +3,7 @@ import { feeService } from '../../api/feeService';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import { Container, Row, Col, Table, Button, Badge, Spinner, Modal, Form } from 'react-bootstrap';
+import { getStudentByUserId } from '../../services/studentService';
 
 const StudentFees = () => {
   const { user } = useAuth();
@@ -25,7 +26,13 @@ const StudentFees = () => {
   const fetchFees = async () => {
     try {
       setLoading(true);
-      const res = await feeService.getFeesByStudent(user.userId);
+      const profileRes = await getStudentByUserId(user.userId);
+      if (!profileRes.data) {
+        setLoading(false);
+        return;
+      }
+      const studentId = profileRes.data.studentId;
+      const res = await feeService.getFeesByStudent(studentId);
       setFees(res.data);
     } catch (err) {
       toast.error('Failed to load your fees');

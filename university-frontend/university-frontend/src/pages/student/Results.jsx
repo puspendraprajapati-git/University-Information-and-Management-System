@@ -5,6 +5,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import { studentLinks } from '../../components/layout/Sidebar';
 import { getSemesterResult } from '../../services/resultService';
 import { getAllSemesters } from '../../services/semesterService';
+import { getStudentByUserId } from '../../services/studentService';
 
 const Results = () => {
   const { user } = useAuth();
@@ -35,7 +36,14 @@ const Results = () => {
       setLoading(true);
       setNotFound(false);
       try {
-        const res = await getSemesterResult(user.userId, selectedSemester);
+        const profileRes = await getStudentByUserId(user.userId);
+        if (!profileRes.data) {
+          setLoading(false);
+          setNotFound(true);
+          return;
+        }
+        const studentId = profileRes.data.studentId;
+        const res = await getSemesterResult(studentId, selectedSemester);
         setResult(res.data);
       } catch (err) {
         setResult(null);

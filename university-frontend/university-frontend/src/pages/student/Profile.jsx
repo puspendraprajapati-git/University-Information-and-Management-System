@@ -118,14 +118,14 @@ const Profile = () => {
                 <label className="form-label">Department</label>
                 <select className="form-select" name="deptId" value={editData.deptId} onChange={handleChange} required>
                   <option value="">Select Department</option>
-                  {departments.map((d) => <option key={d.id} value={d.id}>{d.deptName}</option>)}
+                  {departments.map((d) => <option key={d.deptId} value={d.deptId}>{d.deptName}</option>)}
                 </select>
               </div>
               <div className="mb-3">
-                <label className="form-label">Current Semester</label>
-                <select className="form-select" name="currentSemesterId" value={editData.currentSemesterId} onChange={handleChange}>
+                <label className="form-label">Semester</label>
+                <select className="form-select" name="currentSemesterId" value={editData.currentSemesterId} onChange={handleChange} required>
                   <option value="">Select Semester</option>
-                  {semesters.map((s) => <option key={s.id} value={s.id}>{s.semesterName}</option>)}
+                  {semesters.map((s) => <option key={s.semesterId} value={s.semesterId}>{s.semesterName}</option>)}
                 </select>
               </div>
               <div className="mb-3">

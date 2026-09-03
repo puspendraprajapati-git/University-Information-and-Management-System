@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { facultyLinks } from '../../components/layout/Sidebar';
 import { getAllEvents, createEvent, updateEvent, deleteEvent } from '../../services/eventService';
+import { getFacultyByUserId } from '../../services/facultyService';
 import ConfirmModal from '../../components/common/ConfirmModal';
 
 const emptyForm = {
@@ -27,17 +28,25 @@ const Events = () => {
   const [editingId, setEditingId] = useState(null); // null -> creating, otherwise editing this id
 
   const [deleteId, setDeleteId] = useState(null);
-
   const [filterType, setFilterType] = useState('ALL');
+  const [facultyProfile, setFacultyProfile] = useState(null);
 
   // Fetch latest data from server
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await getAllEvents();
-      setEvents(res.data);
+      const [eventsRes, facRes] = await Promise.all([
+         getAllEvents(),
+         getFacultyByUserId(user.userId),
+      ]);
+      setEvents(eventsRes.data);
+      setFacultyProfile(facRes.data);
     } catch (err) {
-      toast.error('Failed to load events');
+      if (err.response?.status === 404) {
+         toast.error('Faculty profile not found. Please complete your profile.');
+      } else {
+         toast.error('Failed to load events');
+      }
     } finally {
       setLoading(false);
     }
@@ -49,7 +58,11 @@ const Events = () => {
 
   // Open create modal dialog
   const openCreateModal = () => {
-    setFormData({ ...emptyForm, organizerId: user.userId });
+    if (!facultyProfile) {
+      toast.error("Please complete your faculty profile first.");
+      return;
+    }
+    setFormData({ ...emptyForm, organizerId: facultyProfile.facultyId });
     setEditingId(null);
     setShowModal(true);
   };

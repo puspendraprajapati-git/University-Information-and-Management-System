@@ -1,18 +1,29 @@
+# ==============================================================================
+# university-api-gateway (Node.js Express API Gateway) .gitignore
+# ==============================================================================
+
 # Dependencies
 node_modules/
-
-# Environment variables
-.env
-.env.*
-!.env.example
-
-# Logs
-logs/
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.pnpm-store/
+
+# Environment variables & secrets (NEVER COMMIT API KEYS)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.p12
+*.crt
+credentials.json
+
+# Logs
+logs/
+*.log
 
 # Runtime files
 pids/
@@ -20,11 +31,9 @@ pids/
 *.seed
 *.pid.lock
 
-# Coverage
+# Build & test output
 coverage/
 .nyc_output/
-
-# Build output
 dist/
 build/
 
@@ -32,32 +41,11 @@ build/
 tmp/
 temp/
 
-# OS files
-.DS_Store
-Thumbs.db
-
 # IDE files
 .vscode/
 .idea/
 *.iml
 
-# npm cache
-.npm/
-
-# Yarn
-.yarn/
-.yarn/cache/
-.yarn/unplugged/
-.yarn/build-state.yml
-.yarn/install-state.gz
-
-# pnpm
-.pnpm-store/
-
-# Package lock files (optional - keep if working in a team)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-# Misc
-*.tgz
+# OS files
+.DS_Store
+Thumbs.db

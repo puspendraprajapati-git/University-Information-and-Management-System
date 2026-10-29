@@ -1,13 +1,11 @@
-from langchain_groq import ChatGroq
-from langchain_core.messages import SystemMessage, HumanMessage
+import json
+import logging
+from config.settings import GROQ_API_KEY, MODEL_NAME
 from models.schemas import IntentEnum, ChatRequest, ChatResponse
 from intents.analyzer import IntentAnalyzer
 from api_client.client import ApiClient
 from utils.auth import extract_user_info_from_token
 from prompts.templates import GENERATION_SYSTEM_PROMPT
-from config.settings import GROQ_API_KEY, MODEL_NAME
-import logging
-import json
 
 log = logging.getLogger(__name__)
 
@@ -15,6 +13,7 @@ class ChatService:
     def __init__(self):
         self.analyzer = IntentAnalyzer()
         try:
+            from langchain_groq import ChatGroq
             self.llm = ChatGroq(
                 groq_api_key=GROQ_API_KEY,
                 model_name=MODEL_NAME,
@@ -26,7 +25,6 @@ class ChatService:
             self.llm = None
 
     def _get_profile_data(self, client, uid, role):
-        # find studentId or facultyId based on userId
         if role in ('STUDENT', 'ROLE_STUDENT'):
             return client.get_student_profile(uid)
         elif role in ('FACULTY', 'ROLE_FACULTY'):
@@ -37,11 +35,11 @@ class ChatService:
         user_info = extract_user_info_from_token(req.token)
         uid = user_info.get("userId")
         role = user_info.get("role")
-        
+
         intent = self.analyzer.analyze_intent(req.message)
         client = ApiClient(req.token)
         ctx = {}
-        
+
         # handle public intents first
         if intent == IntentEnum.GENERAL:
             ctx = {"note": "no backend data needed"}
@@ -86,23 +84,32 @@ class ChatService:
             elif intent in (IntentEnum.FEES, IntentEnum.TIMETABLE):
                 ctx = {"info": f"{intent.value} is not ready yet in backend."}
 
-        return self._generate(req.message, ctx)
+        return self._generate(req.message, intent, ctx)
 
-    def _generate(self, msg: str, ctx: dict) -> ChatResponse:
-        if not self.llm:
-            return ChatResponse(reply="Sorry, the AI is offline right now.")
-            
-        try:
-            ctx_str = json.dumps(ctx, indent=2)
-            sys_prompt = GENERATION_SYSTEM_PROMPT.format(context=ctx_str)
-            
-            msgs = [
-                SystemMessage(content=sys_prompt),
-                HumanMessage(content=msg)
-            ]
-            
-            res = self.llm.invoke(msgs)
-            return ChatResponse(reply=res.content.strip())
-        except Exception as e:
-            log.error(f"error generating response: {e}")
-            return ChatResponse(reply="Sorry, I ran into an issue formulating my reply.")
+    def _fallback_reply(self, intent: IntentEnum, ctx: dict) -> str:
+        if isinstance(ctx, dict) and "error" in ctx:
+            return ctx["error"]
+        if "info" in ctx:
+            return ctx["info"]
+        if intent == IntentEnum.DEPARTMENTS and isinstance(ctx, list) and ctx:
+            return "University Departments:\n" + "\n".join([f"- {d.get('deptName', '')} ({d.get('deptCode', '')})" for d in ctx])
+        if intent == IntentEnum.EVENTS and isinstance(ctx, list) and ctx:
+            return "Upcoming Events:\n" + "\n".join([f"- {e.get('title', '')} on {e.get('eventDate', '')}" for e in ctx])
+        return "Hi! I am EduCore-Bot. How can I help you today? You can ask me about admissions, campus facilities, library timings, departments, or your attendance and results."
+
+    def _generate(self, msg: str, intent: IntentEnum, ctx: dict) -> ChatResponse:
+        if self.llm:
+            try:
+                from langchain_core.messages import SystemMessage, HumanMessage
+                ctx_str = json.dumps(ctx, indent=2)
+                sys_prompt = GENERATION_SYSTEM_PROMPT.format(context=ctx_str)
+                msgs = [
+                    SystemMessage(content=sys_prompt),
+                    HumanMessage(content=msg)
+                ]
+                res = self.llm.invoke(msgs)
+                return ChatResponse(reply=res.content.strip())
+            except Exception as e:
+                log.error(f"error generating response: {e}")
+
+        return ChatResponse(reply=self._fallback_reply(intent, ctx))

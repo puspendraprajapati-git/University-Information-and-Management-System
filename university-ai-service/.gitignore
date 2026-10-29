@@ -1,0 +1,63 @@
+# ==============================================================================
+# university-ai-service (Python FastAPI Medha AI Student Assistant) .gitignore
+# ==============================================================================
+
+# Python Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment variables & API keys (Protects GROQ_API_KEY and DB credentials)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Local Vector Store database & uploaded university documents
+vector_store_data/
+uploaded_docs/
+*.chroma
+*.sqlite3
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & type checking
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Logs
+logs/
+*.log
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

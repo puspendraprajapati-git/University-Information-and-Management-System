@@ -42,7 +42,7 @@ public class StudentServiceImpl implements StudentService {
             throw new IllegalArgumentException("User role must be STUDENT to create a student profile");
         }
 
-        if (studentRepository.existsById(dto.getUserId())) {
+        if (studentRepository.findByUserId(dto.getUserId()).isPresent()) {
             throw new DuplicateResourceException("Student profile already exists for this user");
         }
 

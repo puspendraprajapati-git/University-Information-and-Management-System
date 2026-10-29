@@ -78,7 +78,7 @@ public class DataSeeder implements CommandLineRunner {
         // Ensure all STUDENT users have a profile
         List<Users> students = usersRepository.findAll().stream().filter(u -> u.getRole() == Role.STUDENT).toList();
         for (Users u : students) {
-            if (!studentRepository.existsById(u.getId())) {
+            if (studentRepository.findByUserId(u.getId()).isEmpty()) {
                 Student s = Student.builder()
                         .user(u)
                         .enrollmentNo("EN" + u.getId())
@@ -98,7 +98,7 @@ public class DataSeeder implements CommandLineRunner {
         // Ensure all FACULTY users have a profile
         List<Users> faculties = usersRepository.findAll().stream().filter(u -> u.getRole() == Role.FACULTY).toList();
         for (Users u : faculties) {
-            if (!facultyRepository.existsById(u.getId())) {
+            if (facultyRepository.findByUserId(u.getId()).isEmpty()) {
                 Faculty f = Faculty.builder()
                         .user(u)
                         .fullName(u.getUsername() != null ? u.getUsername() : "Faculty " + u.getId())

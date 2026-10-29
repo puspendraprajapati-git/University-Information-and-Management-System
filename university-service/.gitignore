@@ -1,17 +1,45 @@
-/.metadata/
-# Eclipse
+# ==============================================================================
+# university-service (Spring Boot Core Microservice) .gitignore
+# ==============================================================================
+
+# Compiled binaries and target directory
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Eclipse IDE
 .metadata/
 .project
 .classpath
 .settings/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
 
 # VS Code
 .vscode/
 
-# IntelliJ
-.idea/
-*.iml
+# Environment files & secret overrides
+.env
+.env.*
+!.env.example
+application-local.properties
+application-secret.properties
+*.key
+*.pem
 
-# Build
-target/
-bin/
+# Log files
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

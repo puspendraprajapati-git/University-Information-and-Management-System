@@ -40,7 +40,7 @@ public class FacultyServiceImpl implements FacultyService {
             throw new IllegalArgumentException("User role must be FACULTY to create a faculty profile");
         }
 
-        if (facultyRepository.existsById(dto.getUserId())) {
+        if (facultyRepository.findByUserId(dto.getUserId()).isPresent()) {
             throw new DuplicateResourceException("Faculty profile already exists for this user");
         }
 

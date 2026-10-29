@@ -15,3 +15,4 @@ export const loginUser = async (data) => {
 
   return response.data;
 };
+

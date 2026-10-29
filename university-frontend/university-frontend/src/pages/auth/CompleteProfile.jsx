@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { GraduationCap, UserCheck } from 'lucide-react';
 import axiosInstance from '../../api/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
 
 const CompleteProfile = ({ role }) => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [departments, setDepartments] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +15,7 @@ const CompleteProfile = ({ role }) => {
     deptId: '',
     currentSemesterId: '',
     dateOfBirth: '',
-    qualification: '', // for faculty
+    qualification: '',
   });
 
   useEffect(() => {
@@ -45,20 +44,18 @@ const CompleteProfile = ({ role }) => {
     setLoading(true);
 
     try {
-      console.log('User in context:', user);
       if (role === 'STUDENT') {
         const payload = {
           userId: user?.userId || user?.id,
-          enrollmentNo: "STU" + Date.now(), // Auto-generate
+          enrollmentNo: "STU" + Date.now(),
           fullName: formData.fullName,
           deptId: Number(formData.deptId),
           currentSemesterId: formData.currentSemesterId ? Number(formData.currentSemesterId) : null,
           dateOfBirth: formData.dateOfBirth
         };
-        console.log('Student Payload:', payload);
         await axiosInstance.post('/students', payload);
         toast.success("Profile completed successfully!");
-        window.location.reload(); // Reload to trigger ProtectedRoute check again
+        window.location.reload();
       } else if (role === 'FACULTY') {
         const payload = {
           userId: user?.userId || user?.id,
@@ -66,7 +63,6 @@ const CompleteProfile = ({ role }) => {
           deptId: Number(formData.deptId),
           qualification: formData.qualification
         };
-        console.log('Faculty Payload:', payload);
         await axiosInstance.post('/faculty', payload);
         toast.success("Profile completed successfully!");
         window.location.reload();
@@ -85,12 +81,18 @@ const CompleteProfile = ({ role }) => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="card shadow-sm p-4 w-50">
-        <h3 className="text-center mb-4">Complete Your Profile</h3>
-        <p className="text-center text-muted mb-4">
-          Please provide the following details to access your dashboard.
-        </p>
+    <div className="auth-wrapper">
+      <div className="auth-card" style={{ maxWidth: "520px" }}>
+        <div className="text-center mb-4">
+          <div className="auth-brand-badge mx-auto">
+            <GraduationCap size={24} />
+          </div>
+          <h3 className="fw-bold text-dark mb-1">Complete Your Profile</h3>
+          <p className="text-muted small">
+            Please provide the following details to access your {role?.toLowerCase()} dashboard.
+          </p>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">Full Name</label>
@@ -98,6 +100,7 @@ const CompleteProfile = ({ role }) => {
               type="text"
               className="form-control"
               name="fullName"
+              placeholder="e.g. Dr. John Doe"
               value={formData.fullName}
               onChange={handleChange}
               required
@@ -166,13 +169,18 @@ const CompleteProfile = ({ role }) => {
                 value={formData.qualification}
                 onChange={handleChange}
                 required
-                placeholder="e.g., Ph.D. in Computer Science"
+                placeholder="e.g. Ph.D. in Computer Science"
               />
             </div>
           )}
 
-          <button type="submit" className="btn btn-primary w-100 mt-3" disabled={loading}>
-            {loading ? "Saving..." : "Save Profile"}
+          <button
+            type="submit"
+            className="btn btn-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2 mt-4"
+            disabled={loading}
+          >
+            <UserCheck size={18} />
+            <span>{loading ? "Saving Profile..." : "Save Profile"}</span>
           </button>
         </form>
       </div>

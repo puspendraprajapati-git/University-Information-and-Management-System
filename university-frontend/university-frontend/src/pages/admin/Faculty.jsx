@@ -200,6 +200,13 @@ const Faculty = () => {
                 <td>
 
                   <button
+                    className="btn btn-sm btn-outline-success me-2"
+                    onClick={() => { window.location.href = `/admin/exams?tab=timetable&facultyId=${fac.facultyId}`; }}
+                    title="Assign subjects and class schedule to this faculty"
+                  >
+                    Assign Class
+                  </button>
+                  <button
                     className="btn btn-sm btn-outline-primary me-2"
                     onClick={() => openEditModal(fac)}
                   >

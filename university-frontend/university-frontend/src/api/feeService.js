@@ -1,20 +1,58 @@
-import axiosInstance from './axiosInstance';
+import axios from 'axios';
 
-const FEE_API = '/fee';
-const PAYMENT_API = '/payment';
+const feeAxios = axios.create({
+  baseURL: process.env.REACT_APP_FEE_URL || '/fee',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
+const paymentAxios = axios.create({
+  baseURL: process.env.REACT_APP_PAYMENT_URL || '/payment',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
+const attachToken = (config) => {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+};
+
+feeAxios.interceptors.request.use(attachToken);
+paymentAxios.interceptors.request.use(attachToken);
 
 export const feeService = {
-  getAllFees: () => axiosInstance.get(FEE_API),
-  getFeeById: (id) => axiosInstance.get(`${FEE_API}/${id}`),
-  createFee: (feeData) => axiosInstance.post(FEE_API, feeData),
-  updateFee: (id, feeData) => axiosInstance.put(`${FEE_API}/${id}`, feeData),
-  deleteFee: (id) => axiosInstance.delete(`${FEE_API}/${id}`),
+  // Fee Structures
+  getAllFees: () => feeAxios.get(''),
+  getFeeById: (id) => feeAxios.get(`/${id}`),
+  createFee: (feeData) => feeAxios.post('', feeData),
+  deleteFee: (id) => feeAxios.delete(`/${id}`),
 
-  getFeesByStudent: (studentId) => axiosInstance.get(`${FEE_API}/student/${studentId}`),
+  // Student Invoices
+  getAllInvoices: () => feeAxios.get('/invoices'),
+  createInvoice: (invoiceData) => feeAxios.post('/invoices', invoiceData),
+  getFeesByStudent: (studentId) => feeAxios.get(`/student/${studentId}`),
+  getInvoiceById: (id) => feeAxios.get(`/invoices/${id}`),
 
-  processPayment: (paymentData) => axiosInstance.post(PAYMENT_API, paymentData),
-  getPaymentById: (id) => axiosInstance.get(`${PAYMENT_API}/${id}`),
-  getAllPayments: () => axiosInstance.get(PAYMENT_API),
-  getPaymentsByStudent: (studentId) => axiosInstance.get(`${PAYMENT_API}/student/${studentId}`),
-  getPaymentsByFee: (feeId) => axiosInstance.get(`${PAYMENT_API}/fee/${feeId}`),
+  // Razorpay Payments
+  createRazorpayOrder: (invoiceId, customAmount = null) =>
+    paymentAxios.post('/create-order', { invoiceId, customAmount }),
+
+  verifyPayment: (paymentDetails) =>
+    paymentAxios.post('/verify-payment', paymentDetails),
+
+  processPayment: (paymentData) =>
+    paymentAxios.post('', paymentData),
+
+  getPaymentById: (id) => paymentAxios.get(`/${id}`),
+  getReceipt: (paymentId) => paymentAxios.get(`/receipt/${paymentId}`),
+  getPaymentsByStudent: (studentId) => paymentAxios.get(`/student/${studentId}`),
 };
+
+export default feeService;

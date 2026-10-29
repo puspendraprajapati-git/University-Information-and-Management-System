@@ -1,0 +1,45 @@
+# ==============================================================================
+# university-exam-service (Spring Boot Exam & Timetable Microservice) .gitignore
+# ==============================================================================
+
+# Compiled binaries and target directory
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Eclipse IDE
+.metadata/
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Secrets & environment configurations
+.env
+.env.*
+!.env.example
+application-local.properties
+application-secret.properties
+*.key
+*.pem
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>University Database - Entity Relationship Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      color: #ffffff;
+    }
+    .header p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 15px;
+    }
+    .diagram-container {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      overflow-x: auto;
+      display: flex;
+      justify-content: center;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #3b82f6;
+      color: white;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>University Management System</h1>
+    <p>Database Entity-Relationship Diagram (13 Tables in <code>university_db</code>)</p>
+    <div class="badge">MySQL 9.6 • Spring Data JPA</div>
+  </div>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+erDiagram
+    USERS ||--o| STUDENTS : "1:1 profile (user_id)"
+    USERS ||--o| FACULTY : "1:1 profile (user_id)"
+
+    DEPARTMENTS ||--o{ STUDENTS : "belongs to (dept_id)"
+    DEPARTMENTS ||--o{ FACULTY : "employs (dept_id)"
+    DEPARTMENTS |o--o| FACULTY : "headed by HOD (hod_id)"
+    DEPARTMENTS ||--o{ SUBJECTS : "offers (dept_id)"
+
+    SEMESTERS ||--o{ SUBJECTS : "contains (semester_id)"
+    SEMESTERS ||--o{ ENROLLMENTS : "schedules (semester_id)"
+    SEMESTERS ||--o{ ATTENDANCE : "tracks (semester_id)"
+    SEMESTERS ||--o{ RESULTS : "grades (semester_id)"
+    SEMESTERS ||--o{ FEES : "bills (semester_id)"
+    SEMESTERS ||--o{ COURSE_ASSIGNMENTS : "assigns (semester_id)"
+
+    STUDENTS ||--o{ ENROLLMENTS : "enrolls (student_id)"
+    STUDENTS ||--o{ ATTENDANCE : "has attendance (student_id)"
+    STUDENTS ||--o{ RESULTS : "receives (student_id)"
+    STUDENTS ||--o{ FEES : "incurs (student_id)"
+
+    FACULTY ||--o{ ATTENDANCE : "marks (faculty_id)"
+    FACULTY ||--o{ COURSE_ASSIGNMENTS : "teaches (faculty_id)"
+    FACULTY ||--o{ EVENTS : "organizes (organizer_id)"
+
+    SUBJECTS ||--o{ ENROLLMENTS : "subject (subject_id)"
+    SUBJECTS ||--o{ ATTENDANCE : "subject (subject_id)"
+    SUBJECTS ||--o{ RESULTS : "subject (subject_id)"
+    SUBJECTS ||--o{ EXAMS : "tests (subject_id)"
+    SUBJECTS ||--o{ COURSE_ASSIGNMENTS : "assigned to (subject_id)"
+
+    USERS {
+        bigint id PK
+        varchar username UK
+        varchar email UK
+        varchar password
+        enum role "ADMIN, FACULTY, STUDENT"
+        varchar profile_image
+        date created_on
+        datetime last_updated
+    }
+
+    DEPARTMENTS {
+        bigint id PK
+        varchar dept_code UK
+        varchar dept_name UK
+        bigint hod_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    SEMESTERS {
+        bigint id PK
+        varchar semester_name
+        int year
+        date start_date
+        date end_date
+        date created_on
+        datetime last_updated
+    }
+
+    STUDENTS {
+        bigint id PK
+        varchar enrollment_no UK
+        varchar full_name
+        date date_of_birth
+        int current_semester
+        bigint dept_id FK
+        bigint user_id FK "UK"
+        date created_on
+        datetime last_updated
+    }
+
+    FACULTY {
+        bigint id PK
+        varchar full_name
+        varchar qualification
+        bigint dept_id FK
+        bigint user_id FK "UK"
+        date created_on
+        datetime last_updated
+    }
+
+    SUBJECTS {
+        bigint id PK
+        varchar subject_code UK
+        varchar subject_name
+        int credits
+        varchar syllabus_path
+        bigint dept_id FK
+        bigint semester_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    ATTENDANCE {
+        bigint id PK
+        date attendance_date
+        enum status "PRESENT, ABSENT"
+        bigint student_id FK
+        bigint subject_id FK
+        bigint semester_id FK
+        bigint faculty_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    RESULTS {
+        bigint id PK
+        int theory_marks
+        int practical_marks
+        int total_marks
+        varchar grade
+        date result_date
+        bigint student_id FK
+        bigint subject_id FK
+        bigint semester_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    FEES {
+        bigint id PK
+        double amount
+        date due_date
+        date payment_date
+        varchar academic_year
+        enum status "PAID, PARTIAL, PENDING"
+        bigint student_id FK
+        bigint semester_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    ENROLLMENTS {
+        bigint id PK
+        varchar academic_year
+        bigint student_id FK
+        bigint semester_id FK
+        bigint subject_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    COURSE_ASSIGNMENTS {
+        bigint id PK
+        varchar academic_year
+        bigint faculty_id FK
+        bigint subject_id FK
+        bigint semester_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    EXAMS {
+        bigint id PK
+        varchar exam_name
+        date exam_date
+        int max_marks
+        bigint subject_id FK
+        date created_on
+        datetime last_updated
+    }
+
+    EVENTS {
+        bigint id PK
+        varchar title
+        varchar description
+        date event_date
+        varchar venue
+        enum type "EVENT, NEWS, SYLLABUS"
+        varchar file_path
+        bigint organizer_id FK
+        date created_on
+        datetime last_updated
+    }
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#1e293b',
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#60a5fa',
+        lineColor: '#94a3b8',
+        secondaryColor: '#6366f1',
+        tertiaryColor: '#0f172a'
+      }
+    });
+  </script>
+</body>
+</html>

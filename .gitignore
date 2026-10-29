@@ -1,1 +1,121 @@
-/.metadata/
+# ==============================================================================
+# Master Root .gitignore for University ERP Microservices Project
+# Prevents API keys, secrets, credentials, environment variables, heavy builds,
+# virtual environments, and local IDE configs from ever being pushed to GitHub.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment & Secrets (NEVER COMMIT SENSITIVE KEYS)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+*.key
+*.pem
+*.pfx
+*.p12
+*.pkcs12
+*.cer
+*.crt
+id_rsa*
+secrets/
+credentials.json
+google-credentials.json
+jwt-secret.txt
+
+# ------------------------------------------------------------------------------
+# 2. Database Dumps & Local Backups (May contain real student/admin passwords)
+# ------------------------------------------------------------------------------
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.bak
+
+# ------------------------------------------------------------------------------
+# 3. Java / Maven Services (university-service, lms, exam, placement)
+# ------------------------------------------------------------------------------
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+.mvn/wrapper/maven-wrapper.jar
+*.flatpak-builder
+
+# ------------------------------------------------------------------------------
+# 4. .NET Core Services (university-fee-service, university-library-service)
+# ------------------------------------------------------------------------------
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+appsettings.Development.json
+appsettings.Local.json
+
+# ------------------------------------------------------------------------------
+# 5. Node.js / React (frontend, api-gateway, notification-service)
+# ------------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+build/
+dist/
+.cache/
+
+# ------------------------------------------------------------------------------
+# 6. Python / FastAPI (university-ai-service)
+# ------------------------------------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+vector_store_data/
+uploaded_docs/
+
+# ------------------------------------------------------------------------------
+# 7. IDE, Editor & OS Generated Files
+# ------------------------------------------------------------------------------
+.metadata/
+.project
+.classpath
+.settings/
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ------------------------------------------------------------------------------
+# 8. Application Logs & Temporary Files
+# ------------------------------------------------------------------------------
+logs/
+*.log
+*.tmp
+*.temp
+temp/
+tmp/
